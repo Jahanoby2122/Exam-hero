@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { NavLink } from "react-router";
 import {
   AiOutlineHome,
@@ -10,11 +10,24 @@ import {
   AiOutlineUserAdd,
   AiOutlineClose
 } from "react-icons/ai";
+import { AuthContext } from "../Provider/AuthProvider";
 
 const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProgramsOpen, setIsProgramsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const { user, logOut } = useContext(AuthContext);
+
+  const handleLogout = () => {
+    logOut()
+      .then(() => {
+        alert("Logout successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   // Handle scroll effect for header
   useEffect(() => {
@@ -22,7 +35,6 @@ const Header = () => {
       const isScrolled = window.scrollY > 10;
       setScrolled(isScrolled);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -196,25 +208,38 @@ const Header = () => {
 
           {/* Right: Auth buttons */}
           <div className="flex items-center gap-2">
-            <NavLink 
-              to="/login" 
-              className="btn btn-outline btn-primary hidden sm:inline-flex items-center gap-1 transition-all duration-300 hover:gap-2 hover:shadow-md"
-            >
-              <AiOutlineLogin className="mr-1 transition-transform group-hover:scale-110" /> 
-              Login
-            </NavLink>
-            <NavLink 
-              to="/register" 
-              className="btn btn-primary hidden sm:inline-flex items-center gap-1 transition-all duration-300 hover:gap-2 hover:shadow-md"
-            >
-              <AiOutlineUserAdd className="mr-1 transition-transform group-hover:scale-110" /> 
-              Register
-            </NavLink>
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="btn btn-outline btn-primary hidden sm:inline-flex items-center gap-1 transition-all duration-300 hover:gap-2 hover:shadow-md"
+              >
+                Logout
+              </button>
+            ) : (
+              <>
+                <NavLink 
+                  to="/login" 
+                  className="btn btn-outline btn-primary hidden sm:inline-flex items-center gap-1 transition-all duration-300 hover:gap-2 hover:shadow-md"
+                >
+                  <AiOutlineLogin className="mr-1 transition-transform group-hover:scale-110" /> 
+                  Login
+                </NavLink>
+                <NavLink 
+                  to="/register" 
+                  className="btn btn-primary hidden sm:inline-flex items-center gap-1 transition-all duration-300 hover:gap-2 hover:shadow-md"
+                >
+                  <AiOutlineUserAdd className="mr-1 transition-transform group-hover:scale-110" /> 
+                  Register
+                </NavLink>
+              </>
+            )}
 
             {/* Mobile buttons */}
-            <NavLink to="/login" className="btn btn-ghost btn-sm sm:hidden rounded-full p-2">
-              <AiOutlineLogin className="text-lg" />
-            </NavLink>
+            { !user && (
+              <NavLink to="/login" className="btn btn-ghost btn-sm sm:hidden rounded-full p-2">
+                <AiOutlineLogin className="text-lg" />
+              </NavLink>
+            )}
           </div>
         </div>
       </div>
@@ -295,15 +320,26 @@ const Header = () => {
                 <AiOutlinePhone className="text-xl" /> Contact
               </NavLink>
             </li>
-            
+
             {/* Mobile Auth Buttons */}
             <li className="pt-4 mt-4 border-t border-gray-200">
-              <NavLink to="/login" className="btn btn-outline btn-primary w-full justify-center mb-2" onClick={() => setIsMobileMenuOpen(false)}>
-                <AiOutlineLogin className="mr-2" /> Login
-              </NavLink>
-              <NavLink to="/register" className="btn btn-primary w-full justify-center" onClick={() => setIsMobileMenuOpen(false)}>
-                <AiOutlineUserAdd className="mr-2" /> Register
-              </NavLink>
+              {user ? (
+                <button
+                  onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                  className="btn btn-outline btn-primary w-full justify-center mb-2"
+                >
+                  Logout
+                </button>
+              ) : (
+                <>
+                  <NavLink to="/login" className="btn btn-outline btn-primary w-full justify-center mb-2" onClick={() => setIsMobileMenuOpen(false)}>
+                    <AiOutlineLogin className="mr-2" /> Login
+                  </NavLink>
+                  <NavLink to="/register" className="btn btn-primary w-full justify-center" onClick={() => setIsMobileMenuOpen(false)}>
+                    <AiOutlineUserAdd className="mr-2" /> Register
+                  </NavLink>
+                </>
+              )}
             </li>
           </ul>
         </div>

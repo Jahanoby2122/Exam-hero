@@ -2,6 +2,10 @@ import { createBrowserRouter } from "react-router";
 import MainLayout from "../Layout/MainLayout";
 import Home from "../Components/Home";
 import About from "../Pages/About";
+import Register from "../Pages/Register";
+import { path } from "framer-motion/client";
+import Login from "../Pages/Login";
+
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +19,16 @@ export const router = createBrowserRouter([
       {
         path:"/about",
         element:<About></About>
+      },
+      {
+        path: "/register",
+        element: <Register></Register>
+      },
+      {
+        path:"/login",
+        element: <Login></Login>
       }
+      
     ],
   },
 ]);
