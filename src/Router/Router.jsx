@@ -5,6 +5,7 @@ import About from "../Pages/About";
 import Register from "../Pages/Register";
 import { path } from "framer-motion/client";
 import Login from "../Pages/Login";
+import Contact from "../Pages/Contact";
 
 
 export const router = createBrowserRouter([
@@ -27,6 +28,10 @@ export const router = createBrowserRouter([
       {
         path:"/login",
         element: <Login></Login>
+      },
+      {
+        path:'/contact',
+        element:<Contact></Contact>
       }
       
     ],
