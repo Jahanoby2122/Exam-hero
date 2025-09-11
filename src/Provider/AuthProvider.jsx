@@ -1,13 +1,15 @@
 import { 
   createUserWithEmailAndPassword, 
+  GoogleAuthProvider, 
   onAuthStateChanged, 
   signInWithEmailAndPassword, 
+  signInWithPopup, 
   signOut 
 } from 'firebase/auth';
 import React, { createContext, useEffect, useState } from 'react';
 import auth from '../../firebase.inti';
 
-
+const GoogleProvider = new GoogleAuthProvider();
 
 // Context তৈরি
 export const AuthContext = createContext();
@@ -27,6 +29,11 @@ const AuthProvider = ({ children }) => {
   const signInUser = (email, password) => {
     setLoading(true);
     return signInWithEmailAndPassword(auth, email, password);
+  };
+  // google সাইন ইন
+  const signInWithGoogle = () => {
+    setLoading(true);
+    return signInWithPopup(auth, GoogleProvider);
   };
 
   // লগআউট
@@ -53,6 +60,7 @@ const AuthProvider = ({ children }) => {
     signInUser,
     logOut,
     setUser,
+    signInWithGoogle
   };
 
   return (

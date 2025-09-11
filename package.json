@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.13",
+    "axios": "^1.11.0",
     "daisyui": "^5.1.9",
     "firebase": "^12.2.1",
     "framer-motion": "^12.23.12",
@@ -22,6 +23,7 @@
     "react-router": "^7.8.2",
     "react-slick": "^0.31.0",
     "slick-carousel": "^1.8.1",
+    "sweetalert2": "^11.23.0",
     "tailwindcss": "^4.1.13"
   },
   "devDependencies": {

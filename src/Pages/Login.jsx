@@ -5,6 +5,7 @@ import { useNavigate, Link } from "react-router";
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineLoading3Quarters } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
+import SocialLogin from "./SocialLogin/SocialLogin";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -30,20 +31,20 @@ const Login = () => {
       });
   };
 
-  const handleSocialLogin = (provider) => {
-    setError("");
-    setIsLoading(true);
+  // const handleSocialLogin = (provider) => {
+  //   setError("");
+  //   setIsLoading(true);
     
-    provider()
-      .then(() => {
-        setIsLoading(false);
-        navigate("/");
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        setError(err.message);
-      });
-  };
+  //   provider()
+  //     .then(() => {
+  //       setIsLoading(false);
+  //       navigate("/");
+  //     })
+  //     .catch((err) => {
+  //       setIsLoading(false);
+  //       setError(err.message);
+  //     });
+  // };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-8">
@@ -157,22 +158,7 @@ const Login = () => {
 
           {/* Social Login */}
           <div className="flex gap-4">
-            <button 
-              onClick={() => handleSocialLogin(signInWithGoogle)}
-              disabled={isLoading}
-              className="flex-1 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-            >
-              <FcGoogle size={18} />
-              <span>Google</span>
-            </button>
-            <button 
-              onClick={() => handleSocialLogin(signInWithFacebook)}
-              disabled={isLoading}
-              className="flex-1 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-            >
-              <FaFacebook size={18} className="text-blue-600" />
-              <span>Facebook</span>
-            </button>
+            <SocialLogin></SocialLogin>
           </div>
 
           <p className="text-center text-gray-500 mt-6">

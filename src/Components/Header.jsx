@@ -207,7 +207,7 @@ const Header = () => {
               <li>
                 <NavLink to="/addteacher" className={linkClass}>
                   <AiOutlinePhone className="text-lg transition-transform group-hover:scale-110" /> 
-                  <span className="relative after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all after:duration-300 group-hover:after:w-full">Add teacher</span>
+                  <span className="relative after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all after:duration-300 group-hover:after:w-full">Apply Teacher</span>
                 </NavLink>
               </li>
             </ul>
@@ -317,16 +317,22 @@ const Header = () => {
                 <AiOutlineUserAdd className="text-xl" /> Founder Journey
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="/faq" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
                 <AiOutlineQuestionCircle className="text-xl" /> FAQ
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink to="/contact" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>
                 <AiOutlinePhone className="text-xl" /> Contact
               </NavLink>
             </li>
+            <li>
+                <NavLink to="/addteacher" className={linkClass}>
+                  <AiOutlinePhone className="text-lg transition-transform group-hover:scale-110" /> 
+                  <span className="relative after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all after:duration-300 group-hover:after:w-full">Apply Teacher</span>
+                </NavLink>
+              </li>
 
             {/* Mobile Auth Buttons */}
             <li className="pt-4 mt-4 border-t border-gray-200">

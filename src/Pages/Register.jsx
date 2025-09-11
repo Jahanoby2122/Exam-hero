@@ -3,11 +3,12 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../Provider/AuthProvider";
 import { Link, useNavigate } from "react-router";
 import { AiOutlineEye, AiOutlineEyeInvisible, AiOutlineCheckCircle } from "react-icons/ai";
-import { FcGoogle } from "react-icons/fc";
-import { FaFacebook } from "react-icons/fa";
+import SocialLogin from "./SocialLogin/SocialLogin";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 export default function Register() {
-  const { createUser, signInWithGoogle, signInWithFacebook } = useContext(AuthContext);
+  const { createUser } = useContext(AuthContext);
+  const axiosSecure = useAxiosSecure();
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,52 +26,55 @@ export default function Register() {
 
   const password = watch("password");
 
+  // ✅ Backend এ user save করার helper
+  const saveUserToDB = async (userData) => {
+    try {
+      await axiosSecure.post("/users", userData);
+    } catch (err) {
+      console.error("Failed to save user:", err);
+    }
+  };
+
   const onSubmit = async (data) => {
     setIsLoading(true);
     setSuccess("");
     try {
-      await createUser(data.email, data.password);
+      // 1️⃣ Firebase Auth দিয়ে create
+      const userCredential = await createUser(data.email, data.password);
+
+      // 2️⃣ Backend এ save করা
+      await saveUserToDB({
+        name: data.name,
+        email: data.email,
+        role: "user",
+        createdAt: new Date(),
+      });
+
       setSuccess("Account created successfully!");
       reset();
-      // Redirect after a short delay to show success message
+
+      // redirect
       setTimeout(() => navigate("/"), 1500);
     } catch (error) {
       console.error("Registration error:", error);
       setError("root", {
         type: "manual",
-        message: error.message || "Registration failed. Please try again.",
+        message: error.response?.data?.error || error.message || "Registration failed. Please try again.",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSocialLogin = (provider) => {
-    setIsLoading(true);
-    setSuccess("");
-    
-    provider()
-      .then(() => {
-        navigate("/");
-      })
-      .catch((error) => {
-        setError("root", {
-          type: "manual",
-          message: error.message || "Social login failed. Please try again.",
-        });
-        setIsLoading(false);
-      });
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-8">
       <div className="max-w-md w-full bg-white shadow-xl rounded-2xl overflow-hidden">
-        {/* Header Section */}
+        {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-700 py-5 px-6">
           <h2 className="text-2xl font-bold text-white text-center">Create Your Account</h2>
           <p className="text-center text-blue-100 mt-1">Join us to get started</p>
         </div>
-        
+
         <div className="p-8">
           {/* Success Message */}
           {success && (
@@ -80,8 +84,9 @@ export default function Register() {
             </div>
           )}
 
+          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Name Field */}
+            {/* Name */}
             <div>
               <label className="block text-gray-700 mb-2 font-medium">Full Name</label>
               <input
@@ -92,44 +97,37 @@ export default function Register() {
                 }`}
                 placeholder="Enter your full name"
               />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-              )}
+              {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
             </div>
 
-            {/* Email Field */}
+            {/* Email */}
             <div>
               <label className="block text-gray-700 mb-2 font-medium">Email Address</label>
               <input
                 type="email"
-                {...register("email", { 
+                {...register("email", {
                   required: "Email is required",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address"
-                  }
+                    message: "Invalid email address",
+                  },
                 })}
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all ${
                   errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
                 }`}
                 placeholder="Enter your email"
               />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-              )}
+              {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
             </div>
 
-            {/* Password Field */}
+            {/* Password */}
             <div className="relative">
               <label className="block text-gray-700 mb-2 font-medium">Password</label>
               <input
                 type={showPassword ? "text" : "password"}
                 {...register("password", {
                   required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
+                  minLength: { value: 6, message: "Password must be at least 6 characters" },
                 })}
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all pr-10 ${
                   errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
@@ -144,24 +142,17 @@ export default function Register() {
               >
                 {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
               </button>
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </p>
-              )}
+              {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
             </div>
 
-            {/* Confirm Password Field */}
+            {/* Confirm Password */}
             <div className="relative">
-              <label className="block text-gray-700 mb-2 font-medium">
-                Confirm Password
-              </label>
+              <label className="block text-gray-700 mb-2 font-medium">Confirm Password</label>
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 {...register("confirmPassword", {
                   required: "Confirm Password is required",
-                  validate: (value) =>
-                    value === password || "Passwords do not match",
+                  validate: (value) => value === password || "Passwords do not match",
                 })}
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 transition-all pr-10 ${
                   errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "border-gray-300 focus:ring-blue-500"
@@ -176,30 +167,23 @@ export default function Register() {
               >
                 {showConfirmPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
               </button>
-              {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
+              {errors.confirmPassword && <p className="text-red-500 text-sm mt-1">{errors.confirmPassword.message}</p>}
             </div>
 
-            {/* Terms and Conditions */}
+            {/* Terms */}
             <div className="flex items-start gap-3">
               <input
                 type="checkbox"
                 id="terms"
-                {...register("terms", {
-                  required: "You must accept the terms",
-                })}
+                {...register("terms", { required: "You must accept the terms" })}
                 className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label htmlFor="terms" className="text-sm text-gray-700">
-                I agree to the <span className="text-blue-600 hover:underline cursor-pointer">Terms & Conditions</span> and <span className="text-blue-600 hover:underline cursor-pointer">Privacy Policy</span>
+                I agree to the <span className="text-blue-600 hover:underline cursor-pointer">Terms & Conditions</span> and{" "}
+                <span className="text-blue-600 hover:underline cursor-pointer">Privacy Policy</span>
               </label>
             </div>
-            {errors.terms && (
-              <p className="text-red-500 text-sm">{errors.terms.message}</p>
-            )}
+            {errors.terms && <p className="text-red-500 text-sm">{errors.terms.message}</p>}
 
             {/* Root Error */}
             {errors.root && (
@@ -235,24 +219,9 @@ export default function Register() {
             <hr className="flex-1 border-gray-300" />
           </div>
 
-          {/* Social Login */}
+          {/* Social Login Component */}
           <div className="flex gap-4">
-            <button 
-              onClick={() => handleSocialLogin(signInWithGoogle)}
-              disabled={isLoading}
-              className="flex-1 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-            >
-              <FcGoogle size={18} />
-              <span>Google</span>
-            </button>
-            <button 
-              onClick={() => handleSocialLogin(signInWithFacebook)}
-              disabled={isLoading}
-              className="flex-1 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 transition-colors disabled:opacity-50"
-            >
-              <FaFacebook size={18} className="text-blue-600" />
-              <span>Facebook</span>
-            </button>
+            <SocialLogin />
           </div>
 
           <p className="text-center text-gray-500 mt-6">
