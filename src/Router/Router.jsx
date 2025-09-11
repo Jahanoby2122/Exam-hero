@@ -6,6 +6,7 @@ import Register from "../Pages/Register";
 import { path } from "framer-motion/client";
 import Login from "../Pages/Login";
 import Contact from "../Pages/Contact";
+import AddTeacher from "../Pages/AddTeacher";
 
 
 export const router = createBrowserRouter([
@@ -32,6 +33,10 @@ export const router = createBrowserRouter([
       {
         path:'/contact',
         element:<Contact></Contact>
+      },
+      {
+        path:"/addteacher",
+        element: <AddTeacher></AddTeacher>
       }
       
     ],
