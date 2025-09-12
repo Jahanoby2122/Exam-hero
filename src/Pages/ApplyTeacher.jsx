@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import UseAxiosSecure from "../Hooks/UseAxiosSecure";
+import Swal from "sweetalert2";
+import "sweetalert2/dist/sweetalert2.min.css";
 
-const AddTeacher = () => {
-  const axiosSecure = UseAxiosSecure(); // custom axios hook
+const ApplyTeacher = () => {
+  const axiosSecure = UseAxiosSecure();
   const [teacher, setTeacher] = useState({
     fullName: "",
     subject: "",
@@ -17,7 +19,6 @@ const AddTeacher = () => {
 
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
   const [errors, setErrors] = useState({});
 
   // Input validation
@@ -50,7 +51,6 @@ const AddTeacher = () => {
     const { name, value } = e.target;
     setTeacher({ ...teacher, [name]: value });
 
-    // Clear error when user types
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
     }
@@ -61,22 +61,28 @@ const AddTeacher = () => {
     e.preventDefault();
 
     if (!validateForm()) {
-      setMessage("❌ দয়া করে সমস্ত প্রয়োজনীয় তথ্য প্রদান করুন");
+      Swal.fire({
+        icon: "error",
+        title: "ত্রুটি",
+        text: "দয়া করে সমস্ত প্রয়োজনীয় তথ্য প্রদান করুন",
+      });
       return;
     }
 
     setLoading(true);
-    setMessage("");
 
     try {
-      // axiosSecure দিয়ে POST request
       const res = await axiosSecure.post("/teachers", {
         ...teacher,
         profilePic: profilePic ? profilePic.name : "",
       });
 
       if (res.status === 201 || res.status === 200) {
-        setMessage("✅ শিক্ষক সফলভাবে যুক্ত হয়েছে!");
+        Swal.fire({
+          icon: "success",
+          title: "সফল",
+          text: "শিক্ষক সফলভাবে যুক্ত হয়েছে!",
+        });
         setTeacher({
           fullName: "",
           subject: "",
@@ -91,11 +97,19 @@ const AddTeacher = () => {
         setProfilePic(null);
         setErrors({});
       } else {
-        setMessage(`❌ ত্রুটি: ${res.data.error || "শিক্ষক যোগ করতে ব্যর্থ হয়েছে"}`);
+        Swal.fire({
+          icon: "error",
+          title: "ত্রুটি",
+          text: res.data.error || "শিক্ষক যোগ করতে ব্যর্থ হয়েছে",
+        });
       }
     } catch (error) {
       console.error("Post Error:", error);
-      setMessage("❌ সার্ভার সমস্যা, আবার চেষ্টা করুন।");
+      Swal.fire({
+        icon: "error",
+        title: "ত্রুটি",
+        text: "সার্ভার সমস্যা, আবার চেষ্টা করুন।",
+      });
     } finally {
       setLoading(false);
     }
@@ -107,18 +121,6 @@ const AddTeacher = () => {
         <h2 className="text-3xl font-bold text-gray-800 mb-2">শিক্ষক যোগ করুন</h2>
         <p className="text-gray-600">নতুন শিক্ষকের তথ্য নিচের ফর্মে পূরণ করুন</p>
       </div>
-
-      {message && (
-        <div
-          className={`mb-5 p-4 rounded-lg text-center font-medium ${
-            message.includes("✅")
-              ? "bg-green-100 text-green-700 border border-green-200"
-              : "bg-red-100 text-red-700 border border-red-200"
-          }`}
-        >
-          {message}
-        </div>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -294,24 +296,6 @@ const AddTeacher = () => {
           <div className="flex items-center justify-center w-full">
             <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer border-gray-300 hover:border-blue-500 transition">
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  className="w-8 h-8 mb-4 text-gray-500"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 16"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                  />
-                </svg>
-                <p className="mb-2 text-sm text-gray-500">
-                  <span className="font-semibold">ক্লিক করে ছবি আপলোড করুন</span> বা এখানে ড্র্যাগ করুন
-                </p>
                 <p className="text-xs text-gray-500">
                   {profilePic ? profilePic.name : "SVG, PNG, JPG or GIF (MAX. 5MB)"}
                 </p>
@@ -348,33 +332,7 @@ const AddTeacher = () => {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition font-medium flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {loading ? (
-              <>
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                সংরক্ষণ করা হচ্ছে...
-              </>
-            ) : (
-              "শিক্ষক যোগ করুন"
-            )}
+            {loading ? "সংরক্ষণ করা হচ্ছে..." : "শিক্ষক যোগ করুন"}
           </button>
         </div>
       </form>
@@ -382,4 +340,4 @@ const AddTeacher = () => {
   );
 };
 
-export default AddTeacher;
+export default ApplyTeacher;

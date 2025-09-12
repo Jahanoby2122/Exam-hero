@@ -205,7 +205,7 @@ const Header = () => {
                 
               </li>
               <li>
-                <NavLink to="/addteacher" className={linkClass}>
+                <NavLink to="/applyteacher" className={linkClass}>
                   <AiOutlinePhone className="text-lg transition-transform group-hover:scale-110" /> 
                   <span className="relative after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all after:duration-300 group-hover:after:w-full">Apply Teacher</span>
                 </NavLink>
