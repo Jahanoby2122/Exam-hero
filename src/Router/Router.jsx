@@ -7,6 +7,9 @@ import { path } from "framer-motion/client";
 import Login from "../Pages/Login";
 import Contact from "../Pages/Contact";
 import ApplyTeacher from "../Pages/ApplyTeacher";
+import DashBoardLayout from "../Pages/DashBoard/DashBoardLayout";
+
+
 
 
 export const router = createBrowserRouter([
@@ -43,4 +46,14 @@ export const router = createBrowserRouter([
       
     ],
   },
+  {
+    path:'/dashboard',
+    element: <DashBoardLayout></DashBoardLayout>,
+    children:[
+      {
+        
+      }
+    ]
+   
+  }
 ]);
