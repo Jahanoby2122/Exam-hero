@@ -8,6 +8,8 @@ import Login from "../Pages/Login";
 import Contact from "../Pages/Contact";
 import ApplyTeacher from "../Pages/ApplyTeacher";
 import DashBoardLayout from "../Pages/DashBoard/DashBoardLayout";
+import AdminTeacherApplication from "../Pages/DashBoard/AdminTeacherApplication";
+
 
 
 
@@ -51,8 +53,10 @@ export const router = createBrowserRouter([
     element: <DashBoardLayout></DashBoardLayout>,
     children:[
       {
-        
+        path:"teacherapplications",
+        element:<AdminTeacherApplication></AdminTeacherApplication>
       }
+      
     ]
    
   }
