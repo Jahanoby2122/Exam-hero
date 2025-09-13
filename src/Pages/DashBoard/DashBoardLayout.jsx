@@ -40,7 +40,7 @@ const DashBoardLayout = () => {
       {/* Sidebar content here */}
       <li><Link to={`teacherapplications`}>Admin pending teachers</Link></li>
       <li><Link>Change banners</Link></li>
-      <li><Link>Contact </Link></li>
+      <li><Link to={`contactmessages`}>Contact </Link></li>
       <li><Link>User role updated</Link></li>
     </ul>
   </div>

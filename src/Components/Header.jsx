@@ -12,7 +12,10 @@ import {
   AiOutlineUser,
   AiOutlineDashboard,
   AiOutlineLogout,
-  AiOutlineMenu
+  AiOutlineMenu,
+  AiOutlineBook,
+  AiOutlineTeam,
+  AiOutlineRocket
 } from "react-icons/ai";
 import { AuthContext } from "../Provider/AuthProvider";
 
@@ -22,15 +25,16 @@ const Header = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [activeMobileSubmenu, setActiveMobileSubmenu] = useState(null);
 
   const { user, logOut } = useContext(AuthContext);
   const programsRef = useRef(null);
   const profileRef = useRef(null);
+  const mobileMenuRef = useRef(null);
 
   const handleLogout = () => {
     logOut()
       .then(() => {
-        // You can add a toast notification here instead of alert
         console.log("Logout successfully");
       })
       .catch((error) => {
@@ -58,7 +62,7 @@ const Header = () => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setIsProfileOpen(false);
       }
-      if (isMobileMenuOpen && !event.target.closest('.mobile-menu-container')) {
+      if (isMobileMenuOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
         setIsMobileMenuOpen(false);
       }
     };
@@ -76,19 +80,22 @@ const Header = () => {
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
     }
     
     return () => {
       document.body.style.overflow = 'unset';
+      document.documentElement.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
 
   const linkClass = ({ isActive }) =>
     `flex items-center gap-2 px-3 py-2 transition-all duration-300 relative group ${
       isActive 
-        ? "text-blue-600 font-semibold" 
+        ? "text-blue-600 font-semibold after:absolute after:left-3 after:right-3 after:-bottom-2 after:h-0.5 after:bg-blue-600" 
         : "text-gray-700 hover:text-blue-600"
     }`;
 
@@ -102,6 +109,10 @@ const Header = () => {
   // Handle image loading errors
   const handleImageError = () => {
     setImageError(true);
+  };
+
+  const toggleMobileSubmenu = (menu) => {
+    setActiveMobileSubmenu(activeMobileSubmenu === menu ? null : menu);
   };
 
   return (
@@ -129,8 +140,11 @@ const Header = () => {
               className="text-xl font-bold text-blue-700 flex items-center transition-transform hover:scale-105 duration-300"
               aria-label="ExamHero Home"
             >
-              <span className="text-2xl bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">Exam</span>
-              <span className="text-2xl text-orange-500">Hero</span>
+              <div className="flex items-center bg-gradient-to-r from-blue-600 to-blue-800 text-white px-3 py-1 rounded-lg">
+                <AiOutlineBook className="mr-2 text-white" />
+                <span className="text-white">Exam</span>
+                <span className="text-orange-300">Hero</span>
+              </div>
             </NavLink>
           </div>
 
@@ -140,13 +154,13 @@ const Header = () => {
               <li>
                 <NavLink to="/" className={linkClass}>
                   <AiOutlineHome className="text-lg transition-transform group-hover:scale-110" /> 
-                  <span className="relative after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all after:duration-300 group-hover:after:w-full">Home</span>
+                  <span>Home</span>
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/about" className={linkClass}>
                   <AiOutlineInfoCircle className="text-lg transition-transform group-hover:scale-110" /> 
-                  <span className="relative after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all after:duration-300 group-hover:after:w-full">About</span>
+                  <span>About</span>
                 </NavLink>
               </li>
 
@@ -163,7 +177,7 @@ const Header = () => {
                   aria-haspopup="true"
                 >
                   <AiOutlineFundProjectionScreen className="text-lg transition-transform group-hover:scale-110" /> 
-                  <span className="relative after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-blue-600 after:transition-all after:duration-300 group-hover:after:w-full">Programs</span>
+                  <span>Programs</span>
                   <svg 
                     className={`w-4 h-4 ml-1 transition-transform duration-300 ${isProgramsOpen ? "rotate-180" : ""}`} 
                     fill="none" 
@@ -176,7 +190,7 @@ const Header = () => {
 
                 {/* Dropdown Content */}
                 <div 
-                  className={`absolute top-full left-0 transform mt-2 bg-white shadow-xl rounded-lg w-96 p-5 grid gap-6 z-50 overflow-hidden ${
+                  className={`absolute top-full left-0 transform mt-2 bg-white shadow-xl rounded-lg w-96 p-5 grid grid-cols-2 gap-6 z-50 overflow-hidden ${
                     isProgramsOpen 
                       ? "opacity-100 translate-y-0 transition-all duration-300 ease-out" 
                       : "opacity-0 -translate-y-2 pointer-events-none transition-all duration-200 ease-in"
@@ -191,9 +205,9 @@ const Header = () => {
                       Secondary School Certificate
                     </h3>
                     <ul className="space-y-2">
-                      <li><NavLink to="/programs/ssc/science" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200" role="menuitem">SSC Science</NavLink></li>
-                      <li><NavLink to="/programs/ssc/humanities" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200" role="menuitem">SSC Humanities</NavLink></li>
-                      <li><NavLink to="/programs/ssc/business" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200" role="menuitem">SSC Business Studies</NavLink></li>
+                      <li><NavLink to="/programs/ssc/science" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> SSC Science</NavLink></li>
+                      <li><NavLink to="/programs/ssc/humanities" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> SSC Humanities</NavLink></li>
+                      <li><NavLink to="/programs/ssc/business" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> SSC Business Studies</NavLink></li>
                     </ul>
                   </div>
 
@@ -204,9 +218,9 @@ const Header = () => {
                       Higher Secondary Certificate
                     </h3>
                     <ul className="space-y-2">
-                      <li><NavLink to="/programs/hsc/science" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200" role="menuitem">HSC Science</NavLink></li>
-                      <li><NavLink to="/programs/hsc/humanities" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200" role="menuitem">HSC Humanities</NavLink></li>
-                      <li><NavLink to="/programs/hsc/business" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200" role="menuitem">HSC Business Studies</NavLink></li>
+                      <li><NavLink to="/programs/hsc/science" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> HSC Science</NavLink></li>
+                      <li><NavLink to="/programs/hsc/humanities" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> HSC Humanities</NavLink></li>
+                      <li><NavLink to="/programs/hsc/business" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> HSC Business Studies</NavLink></li>
                     </ul>
                   </div>
                 </div>
@@ -214,7 +228,7 @@ const Header = () => {
 
               <li><NavLink to="/founder-journey" className={linkClass}><AiOutlineUserAdd className="text-lg" /> Founder Journey</NavLink></li>
               <li><NavLink to="/contact" className={linkClass}><AiOutlinePhone className="text-lg" /> Contact</NavLink></li>
-              <li><NavLink to="/applyteacher" className={linkClass}><AiOutlinePhone className="text-lg" /> Apply Teacher</NavLink></li>
+              <li><NavLink to="/applyteacher" className={linkClass}><AiOutlineTeam className="text-lg" /> Teach With Us</NavLink></li>
             </ul>
           </nav>
 
@@ -229,17 +243,20 @@ const Header = () => {
                   aria-expanded={isProfileOpen}
                   aria-haspopup="true"
                 >
-                  <div className="w-10 h-10 rounded-full border-2 border-blue-500 shadow-sm overflow-hidden">
-                    <img
-                      src={imageError || !user.photoURL 
-                        ? "https://i.ibb.co/2FsfXqM/default-avatar.png" 
-                        : user.photoURL
-                      }
-                      alt={user.displayName || "User"}
-                      className="w-full h-full object-cover"
-                      onError={handleImageError}
-                      loading="lazy"
-                    />
+                  <div className="w-10 h-10 rounded-full border-2 border-blue-500 shadow-sm overflow-hidden bg-blue-100 flex items-center justify-center">
+                    {imageError || !user.photoURL ? (
+                      <span className="text-blue-600 font-semibold text-lg">
+                        {user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
+                      </span>
+                    ) : (
+                      <img
+                        src={user.photoURL}
+                        alt={user.displayName || "User"}
+                        className="w-full h-full object-cover"
+                        onError={handleImageError}
+                        loading="lazy"
+                      />
+                    )}
                   </div>
                   <svg 
                     className={`w-4 h-4 transition-transform duration-300 ${isProfileOpen ? "rotate-180" : ""}`} 
@@ -253,7 +270,7 @@ const Header = () => {
 
                 {/* Profile Dropdown */}
                 {isProfileOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-50 border border-gray-200">
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 z-50 border border-gray-200 animate-fadeIn">
                     <div className="px-4 py-2 border-b border-gray-100">
                       <p className="text-sm font-medium text-gray-900 truncate">{user.displayName || "User"}</p>
                       <p className="text-xs text-gray-500 truncate">{user.email}</p>
@@ -286,8 +303,8 @@ const Header = () => {
               </div>
             ) : (
               <>
-                <NavLink to="/login" className="btn btn-outline btn-primary hidden sm:inline-flex items-center gap-1"> <AiOutlineLogin /> Login </NavLink>
-                <NavLink to="/register" className="btn btn-primary hidden sm:inline-flex items-center gap-1"> <AiOutlineUserAdd /> Register </NavLink>
+                <NavLink to="/login" className="btn btn-outline btn-primary hidden sm:inline-flex items-center gap-1 transition-transform hover:scale-105"> <AiOutlineLogin /> Login </NavLink>
+                <NavLink to="/register" className="btn btn-primary hidden sm:inline-flex items-center gap-1 transition-transform hover:scale-105 ml-2"> <AiOutlineUserAdd /> Register </NavLink>
               </>
             )}
           </div>
@@ -296,6 +313,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       <div 
+        ref={mobileMenuRef}
         className={`lg:hidden fixed inset-0 z-40 transform transition-transform duration-300 ease-in-out bg-white mobile-menu-container ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
@@ -303,47 +321,72 @@ const Header = () => {
       >
         <div className="h-full overflow-y-auto py-4 px-4">
           <ul className="menu space-y-1">
-            <li><NavLink to="/" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineHome /> Home</NavLink></li>
-            <li><NavLink to="/about" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineInfoCircle /> About</NavLink></li>
+            <li><NavLink to="/" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineHome className="text-xl" /> Home</NavLink></li>
+            <li><NavLink to="/about" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineInfoCircle className="text-xl" /> About</NavLink></li>
+            
+            {/* Programs Mobile Submenu */}
             <li>
-              <div className="collapse collapse-arrow">
-                <input type="checkbox" className="peer" />
-                <div className="collapse-title flex items-center gap-3 px-4 py-3 text-gray-700 font-medium peer-checked:bg-blue-50 peer-checked:text-blue-600 rounded-lg">
-                  <AiOutlineFundProjectionScreen className="text-xl" /> Programs
-                </div>
-                <div className="collapse-content pl-4"> 
-                  <ul className="space-y-1 mt-2">
-                    <li><NavLink to="/programs/ssc/science" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>SSC Science</NavLink></li>
-                    <li><NavLink to="/programs/ssc/humanities" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>SSC Humanities</NavLink></li>
-                    <li><NavLink to="/programs/ssc/business" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>SSC Business Studies</NavLink></li>
-                    <li><NavLink to="/programs/hsc/science" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>HSC Science</NavLink></li>
-                    <li><NavLink to="/programs/hsc/humanities" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>HSC Humanities</NavLink></li>
-                    <li><NavLink to="/programs/hsc/business" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>HSC Business Studies</NavLink></li>
-                  </ul>
-                </div>
+              <div className={`rounded-lg ${activeMobileSubmenu === 'programs' ? 'bg-blue-50' : ''}`}>
+                <button 
+                  onClick={() => toggleMobileSubmenu('programs')}
+                  className="flex items-center justify-between w-full px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-gray-50"
+                >
+                  <div className="flex items-center gap-3">
+                    <AiOutlineFundProjectionScreen className="text-xl" /> 
+                    <span>Programs</span>
+                  </div>
+                  <svg 
+                    className={`w-4 h-4 transition-transform duration-300 ${activeMobileSubmenu === 'programs' ? "rotate-180" : ""}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {activeMobileSubmenu === 'programs' && (
+                  <div className="pl-12 mt-1 space-y-1 animate-slideDown">
+                    <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide pl-3 py-1">SSC Programs</div>
+                    <NavLink to="/programs/ssc/science" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>SSC Science</NavLink>
+                    <NavLink to="/programs/ssc/humanities" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>SSC Humanities</NavLink>
+                    <NavLink to="/programs/ssc/business" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>SSC Business Studies</NavLink>
+                    
+                    <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide pl-3 py-1 mt-2">HSC Programs</div>
+                    <NavLink to="/programs/hsc/science" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>HSC Science</NavLink>
+                    <NavLink to="/programs/hsc/humanities" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>HSC Humanities</NavLink>
+                    <NavLink to="/programs/hsc/business" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>HSC Business Studies</NavLink>
+                  </div>
+                )}
               </div>
             </li>
 
-            <li><NavLink to="/founder-journey" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineUserAdd /> Founder Journey</NavLink></li>
-            <li><NavLink to="/contact" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlinePhone /> Contact</NavLink></li>
-            <li><NavLink to="/applyteacher" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlinePhone /> Apply Teacher</NavLink></li>
-            <li><NavLink to="/dashboard" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineDashboard /> Dashboard</NavLink></li>
+            <li><NavLink to="/founder-journey" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineUserAdd className="text-xl" /> Founder Journey</NavLink></li>
+            <li><NavLink to="/contact" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlinePhone className="text-xl" /> Contact</NavLink></li>
+            <li><NavLink to="/applyteacher" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineTeam className="text-xl" /> Teach With Us</NavLink></li>
+            
+            {user && (
+              <li><NavLink to="/dashboard" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineDashboard className="text-xl" /> Dashboard</NavLink></li>
+            )}
 
             {/* Auth + User Info */}
             <li className="pt-4 mt-4 border-t border-gray-200">
               {user ? (
                 <div className="flex flex-col items-center gap-4">
-                  <div className="w-14 h-14 rounded-full object-cover border-2 border-blue-500 shadow-md overflow-hidden">
-                    <img
-                      src={imageError || !user.photoURL 
-                        ? "https://i.ibb.co/2FsfXqM/default-avatar.png" 
-                        : user.photoURL
-                      }
-                      alt={user.displayName || "User"}
-                      className="w-full h-full object-cover"
-                      onError={handleImageError}
-                      loading="lazy"
-                    />
+                  <div className="w-14 h-14 rounded-full border-2 border-blue-500 shadow-md overflow-hidden bg-blue-100 flex items-center justify-center">
+                    {imageError || !user.photoURL ? (
+                      <span className="text-blue-600 font-semibold text-xl">
+                        {user.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
+                      </span>
+                    ) : (
+                      <img
+                        src={user.photoURL}
+                        alt={user.displayName || "User"}
+                        className="w-full h-full object-cover"
+                        onError={handleImageError}
+                        loading="lazy"
+                      />
+                    )}
                   </div>
                   {user.displayName && (
                     <span className="text-gray-700 font-semibold text-center px-2 truncate max-w-full">{user.displayName}</span>
@@ -360,10 +403,10 @@ const Header = () => {
                 </div>
               ) : (
                 <>
-                  <NavLink to="/login" className="btn btn-outline btn-primary w-full mb-2" onClick={() => setIsMobileMenuOpen(false)}>
+                  <NavLink to="/login" className="btn btn-outline btn-primary w-full mb-2 flex items-center justify-center" onClick={() => setIsMobileMenuOpen(false)}>
                     <AiOutlineLogin className="mr-2" /> Login
                   </NavLink>
-                  <NavLink to="/register" className="btn btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                  <NavLink to="/register" className="btn btn-primary w-full flex items-center justify-center" onClick={() => setIsMobileMenuOpen(false)}>
                     <AiOutlineUserAdd className="mr-2" /> Register
                   </NavLink>
                 </>

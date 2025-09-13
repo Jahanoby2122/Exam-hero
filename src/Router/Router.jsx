@@ -9,6 +9,7 @@ import Contact from "../Pages/Contact";
 import ApplyTeacher from "../Pages/ApplyTeacher";
 import DashBoardLayout from "../Pages/DashBoard/DashBoardLayout";
 import AdminTeacherApplication from "../Pages/DashBoard/AdminTeacherApplication";
+import ContactMessageAdmin from "../Pages/DashBoard/ContactMessageAdmin";
 
 
 
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path:"teacherapplications",
         element:<AdminTeacherApplication></AdminTeacherApplication>
+      },
+      {
+        path:'contactmessages',
+        element: <ContactMessageAdmin></ContactMessageAdmin>
       }
       
     ]
