@@ -39,9 +39,9 @@ const DashBoardLayout = () => {
     <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
       {/* Sidebar content here */}
       <li><Link to={`teacherapplications`}>Admin pending teachers</Link></li>
-      <li><Link>Change banners</Link></li>
+      <li><Link to={`changesbanners`}>Change banners</Link></li>
       <li><Link to={`contactmessages`}>Contact </Link></li>
-      <li><Link>User role updated</Link></li>
+      <li><Link to={`userroleupdate`}>User role updated</Link></li>
     </ul>
   </div>
 </div>

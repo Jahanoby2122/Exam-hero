@@ -10,6 +10,8 @@ import ApplyTeacher from "../Pages/ApplyTeacher";
 import DashBoardLayout from "../Pages/DashBoard/DashBoardLayout";
 import AdminTeacherApplication from "../Pages/DashBoard/AdminTeacherApplication";
 import ContactMessageAdmin from "../Pages/DashBoard/ContactMessageAdmin";
+import UserRoleUpdate from "../Pages/DashBoard/UserRoleUpdate";
+import ChangesBanners from "../Pages/DashBoard/ChangesBanners";
 
 
 
@@ -60,6 +62,14 @@ export const router = createBrowserRouter([
       {
         path:'contactmessages',
         element: <ContactMessageAdmin></ContactMessageAdmin>
+      },
+      {
+        path:'userroleupdate',
+        element:<UserRoleUpdate></UserRoleUpdate>
+      },
+      {
+        path:'changesbanners',
+        element:<ChangesBanners></ChangesBanners>
       }
       
     ]
