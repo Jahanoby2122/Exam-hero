@@ -31,6 +31,7 @@ const Header = () => {
   const programsRef = useRef(null);
   const profileRef = useRef(null);
   const mobileMenuRef = useRef(null);
+  const mobileMenuButtonRef = useRef(null);
 
   const handleLogout = () => {
     logOut()
@@ -56,14 +57,23 @@ const Header = () => {
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Close programs dropdown if clicked outside
       if (programsRef.current && !programsRef.current.contains(event.target)) {
         setIsProgramsOpen(false);
       }
+      
+      // Close profile dropdown if clicked outside
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setIsProfileOpen(false);
       }
-      if (isMobileMenuOpen && mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
-        setIsMobileMenuOpen(false);
+      
+      // Close mobile menu if clicked outside and not the menu button
+      if (isMobileMenuOpen && 
+          mobileMenuRef.current && 
+          !mobileMenuRef.current.contains(event.target) &&
+          mobileMenuButtonRef.current &&
+          !mobileMenuButtonRef.current.contains(event.target)) {
+        closeMobileMenu();
       }
     };
     
@@ -91,6 +101,15 @@ const Header = () => {
       document.documentElement.style.overflow = 'unset';
     };
   }, [isMobileMenuOpen]);
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(prev => !prev);
+  };
+
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    setActiveMobileSubmenu(null);
+  };
 
   const linkClass = ({ isActive }) =>
     `flex items-center gap-2 px-3 py-2 transition-all duration-300 relative group ${
@@ -122,7 +141,8 @@ const Header = () => {
           {/* Left: Logo + Mobile Menu */}
           <div className="flex items-center">
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              ref={mobileMenuButtonRef}
+              onClick={toggleMobileMenu}
               className="btn btn-ghost lg:hidden mr-2 p-2 rounded-full hover:bg-gray-100 transition-colors"
               aria-label="Toggle menu"
               aria-expanded={isMobileMenuOpen}
@@ -205,7 +225,7 @@ const Header = () => {
                       Secondary School Certificate
                     </h3>
                     <ul className="space-y-2">
-                      <li><NavLink to="/programs/ssc/science" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> SSC Science</NavLink></li>
+                      <li><NavLink to="/sscscience" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> SSC Science</NavLink></li>
                       <li><NavLink to="/programs/ssc/humanities" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> SSC Humanities</NavLink></li>
                       <li><NavLink to="/programs/ssc/business" className="block py-2 px-3 rounded-lg hover:bg-blue-50 hover:pl-4 transition-all duration-200 flex items-center gap-2" role="menuitem"><AiOutlineRocket className="text-blue-500" /> SSC Business Studies</NavLink></li>
                     </ul>
@@ -226,7 +246,7 @@ const Header = () => {
                 </div>
               </li>
 
-              <li><NavLink to="/founder-journey" className={linkClass}><AiOutlineUserAdd className="text-lg" /> Founder Journey</NavLink></li>
+              <li><NavLink to="/allteachers" className={linkClass}><AiOutlineUserAdd className="text-lg" /> allteachers</NavLink></li>
               <li><NavLink to="/contact" className={linkClass}><AiOutlinePhone className="text-lg" /> Contact</NavLink></li>
               <li><NavLink to="/applyteacher" className={linkClass}><AiOutlineTeam className="text-lg" /> Teach With Us</NavLink></li>
             </ul>
@@ -321,8 +341,8 @@ const Header = () => {
       >
         <div className="h-full overflow-y-auto py-4 px-4">
           <ul className="menu space-y-1">
-            <li><NavLink to="/" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineHome className="text-xl" /> Home</NavLink></li>
-            <li><NavLink to="/about" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineInfoCircle className="text-xl" /> About</NavLink></li>
+            <li><NavLink to="/" className={mobileLinkClass} onClick={closeMobileMenu}><AiOutlineHome className="text-xl" /> Home</NavLink></li>
+            <li><NavLink to="/about" className={mobileLinkClass} onClick={closeMobileMenu}><AiOutlineInfoCircle className="text-xl" /> About</NavLink></li>
             
             {/* Programs Mobile Submenu */}
             <li>
@@ -348,25 +368,25 @@ const Header = () => {
                 {activeMobileSubmenu === 'programs' && (
                   <div className="pl-12 mt-1 space-y-1 animate-slideDown">
                     <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide pl-3 py-1">SSC Programs</div>
-                    <NavLink to="/programs/ssc/science" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>SSC Science</NavLink>
-                    <NavLink to="/programs/ssc/humanities" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>SSC Humanities</NavLink>
-                    <NavLink to="/programs/ssc/business" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>SSC Business Studies</NavLink>
+                    <NavLink to="/programs/ssc/science" className={mobileLinkClass} onClick={closeMobileMenu}>SSC Science</NavLink>
+                    <NavLink to="/programs/ssc/humanities" className={mobileLinkClass} onClick={closeMobileMenu}>SSC Humanities</NavLink>
+                    <NavLink to="/programs/ssc/business" className={mobileLinkClass} onClick={closeMobileMenu}>SSC Business Studies</NavLink>
                     
                     <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide pl-3 py-1 mt-2">HSC Programs</div>
-                    <NavLink to="/programs/hsc/science" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>HSC Science</NavLink>
-                    <NavLink to="/programs/hsc/humanities" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>HSC Humanities</NavLink>
-                    <NavLink to="/programs/hsc/business" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}>HSC Business Studies</NavLink>
+                    <NavLink to="/programs/hsc/science" className={mobileLinkClass} onClick={closeMobileMenu}>HSC Science</NavLink>
+                    <NavLink to="/programs/hsc/humanities" className={mobileLinkClass} onClick={closeMobileMenu}>HSC Humanities</NavLink>
+                    <NavLink to="/programs/hsc/business" className={mobileLinkClass} onClick={closeMobileMenu}>HSC Business Studies</NavLink>
                   </div>
                 )}
               </div>
             </li>
 
-            <li><NavLink to="/founder-journey" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineUserAdd className="text-xl" /> Founder Journey</NavLink></li>
-            <li><NavLink to="/contact" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlinePhone className="text-xl" /> Contact</NavLink></li>
-            <li><NavLink to="/applyteacher" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineTeam className="text-xl" /> Teach With Us</NavLink></li>
+            <li><NavLink to="/founder-journey" className={mobileLinkClass} onClick={closeMobileMenu}><AiOutlineUserAdd className="text-xl" /> Founder Journey</NavLink></li>
+            <li><NavLink to="/contact" className={mobileLinkClass} onClick={closeMobileMenu}><AiOutlinePhone className="text-xl" /> Contact</NavLink></li>
+            <li><NavLink to="/applyteacher" className={mobileLinkClass} onClick={closeMobileMenu}><AiOutlineTeam className="text-xl" /> Teach With Us</NavLink></li>
             
             {user && (
-              <li><NavLink to="/dashboard" className={mobileLinkClass} onClick={() => setIsMobileMenuOpen(false)}><AiOutlineDashboard className="text-xl" /> Dashboard</NavLink></li>
+              <li><NavLink to="/dashboard" className={mobileLinkClass} onClick={closeMobileMenu}><AiOutlineDashboard className="text-xl" /> Dashboard</NavLink></li>
             )}
 
             {/* Auth + User Info */}
@@ -391,11 +411,11 @@ const Header = () => {
                   {user.displayName && (
                     <span className="text-gray-700 font-semibold text-center px-2 truncate max-w-full">{user.displayName}</span>
                   )}
-                  <NavLink to="/profile" className="btn btn-outline btn-primary w-full" onClick={() => setIsMobileMenuOpen(false)}>
+                  <NavLink to="/profile" className="btn btn-outline btn-primary w-full" onClick={closeMobileMenu}>
                     <AiOutlineUser className="mr-2" /> Profile
                   </NavLink>
                   <button
-                    onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                    onClick={() => { handleLogout(); closeMobileMenu(); }}
                     className="btn btn-outline btn-primary w-full"
                   >
                     <AiOutlineLogout className="mr-2" /> Logout
@@ -403,10 +423,10 @@ const Header = () => {
                 </div>
               ) : (
                 <>
-                  <NavLink to="/login" className="btn btn-outline btn-primary w-full mb-2 flex items-center justify-center" onClick={() => setIsMobileMenuOpen(false)}>
+                  <NavLink to="/login" className="btn btn-outline btn-primary w-full mb-2 flex items-center justify-center" onClick={closeMobileMenu}>
                     <AiOutlineLogin className="mr-2" /> Login
                   </NavLink>
-                  <NavLink to="/register" className="btn btn-primary w-full flex items-center justify-center" onClick={() => setIsMobileMenuOpen(false)}>
+                  <NavLink to="/register" className="btn btn-primary w-full flex items-center justify-center" onClick={closeMobileMenu}>
                     <AiOutlineUserAdd className="mr-2" /> Register
                   </NavLink>
                 </>

@@ -13,6 +13,9 @@ import ContactMessageAdmin from "../Pages/DashBoard/ContactMessageAdmin";
 import UserRoleUpdate from "../Pages/DashBoard/UserRoleUpdate";
 import ChangesBanners from "../Pages/DashBoard/ChangesBanners";
 import Profile from "../Pages/DashBoard/Profile";
+import SscScience from "../Components/Programe/SscScience";
+import TeacherDetails from "../Pages/TeacherDetails";
+import AllTeachersPage from "../Components/AllTeachersPage";
 
 
 
@@ -40,6 +43,10 @@ export const router = createBrowserRouter([
         element: <Login></Login>
       },
       {
+        path:'/allteachers',
+        element:<AllTeachersPage></AllTeachersPage>
+      },
+      {
         path:'/contact',
         element:<Contact></Contact>
       },
@@ -48,6 +55,15 @@ export const router = createBrowserRouter([
         element:<ApplyTeacher></ApplyTeacher>
 
       },
+      {
+        path:'teachers/:id',
+        element:<TeacherDetails></TeacherDetails>
+
+      },
+      {
+        path:'/sscscience',
+        element: <SscScience></SscScience>
+      }
       
       
     ],

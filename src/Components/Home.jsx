@@ -1,7 +1,9 @@
 import React from 'react'
 import Hero from './Hero'
-import AllTeahers from '../Pages/AllTeachers'
-import Footer from './Footer'
+import AllTeachersDisplay from '../Pages/AllTeachersDisplay'
+import EducationalGrid from './EducationalGrid'
+
+
 
 
 
@@ -9,8 +11,10 @@ const Home = () => {
   return (
     <div>
       <Hero></Hero>
-      <AllTeahers></AllTeahers>
-      <Footer></Footer>
+      <AllTeachersDisplay></AllTeachersDisplay>
+      <EducationalGrid></EducationalGrid>
+     
+  
     
      
     </div>
