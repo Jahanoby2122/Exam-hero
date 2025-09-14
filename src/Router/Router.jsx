@@ -12,6 +12,7 @@ import AdminTeacherApplication from "../Pages/DashBoard/AdminTeacherApplication"
 import ContactMessageAdmin from "../Pages/DashBoard/ContactMessageAdmin";
 import UserRoleUpdate from "../Pages/DashBoard/UserRoleUpdate";
 import ChangesBanners from "../Pages/DashBoard/ChangesBanners";
+import Profile from "../Pages/DashBoard/Profile";
 
 
 
@@ -70,6 +71,10 @@ export const router = createBrowserRouter([
       {
         path:'changesbanners',
         element:<ChangesBanners></ChangesBanners>
+      },
+      {
+        path:'profile',
+        element:<Profile></Profile>
       }
       
     ]
