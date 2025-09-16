@@ -41,7 +41,7 @@ const Hero = () => {
     clearInterval(slideInterval.current);
     slideInterval.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % banners.length);
-    }, 5000);
+    }, 3000);
   };
 
   const goToSlide = (index) => {

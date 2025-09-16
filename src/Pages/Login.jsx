@@ -124,12 +124,12 @@ const Login = () => {
                 />
                 <span className="select-none">Remember me</span>
               </label>
-              <Link
+              {/* <Link
                 to="/forgot-password"
                 className="text-blue-600 hover:text-blue-800 text-sm transition-colors"
               >
                 Forgot password?
-              </Link>
+              </Link> */}
             </div>
 
             {/* Submit */}

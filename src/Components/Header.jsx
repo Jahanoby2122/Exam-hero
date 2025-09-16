@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
-import { NavLink, useNavigate } from "react-router"; // Use react-router-dom
+import React, { useState, useEffect, useContext, useRef, useCallback } from "react";
+import { NavLink, useNavigate } from "react-router";
 import {
   AiOutlineHome,
   AiOutlineInfoCircle,
@@ -14,8 +14,7 @@ import {
   AiOutlineMenu,
   AiOutlineBook,
   AiOutlineTeam,
-  AiOutlineRocket,
-  AiOutlineCaretDown, // Using a more common dropdown icon
+  AiOutlineCaretDown,
 } from "react-icons/ai";
 import { AuthContext } from "../Provider/AuthProvider";
 
@@ -37,17 +36,18 @@ const Header = () => {
   const mobileMenuButtonRef = useRef(null);
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
+  // Memoize the logout handler
+  const handleLogout = useCallback(async () => {
     try {
       await logOut();
-      console.log("Logout successful");
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
     }
-  };
+  }, [logOut, navigate]);
 
-  const toggleMenuState = (key) => {
+  // Toggle specific menu states
+  const toggleMenuState = useCallback((key) => {
     setMenuState((prevState) => ({
       ...prevState,
       [key]: !prevState[key],
@@ -56,40 +56,40 @@ const Header = () => {
       ...(key === "isProgramsOpen" && { isProfileOpen: false }),
       ...(key === "isMobileMenuOpen" && { activeMobileSubmenu: null }),
     }));
-  };
+  }, []);
 
-  const closeAllMenus = () => {
+  // Close all menus
+  const closeAllMenus = useCallback(() => {
     setMenuState({
       isMobileMenuOpen: false,
       isProgramsOpen: false,
       isProfileOpen: false,
       activeMobileSubmenu: null,
     });
-  };
+  }, []);
 
-  const toggleMobileSubmenu = (menu) => {
+  // Toggle mobile submenus
+  const toggleMobileSubmenu = useCallback((menu) => {
     setMenuState((prevState) => ({
       ...prevState,
       activeMobileSubmenu: prevState.activeMobileSubmenu === menu ? null : menu,
     }));
-  };
+  }, []);
 
   // Handle scroll effect for header
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
     };
-    window.addEventListener("scroll", handleScroll);
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        programsRef.current &&
-        !programsRef.current.contains(event.target)
-      ) {
+      if (programsRef.current && !programsRef.current.contains(event.target)) {
         setMenuState((prev) => ({ ...prev, isProgramsOpen: false }));
       }
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -112,7 +112,7 @@ const Header = () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("touchstart", handleClickOutside);
     };
-  }, [menuState.isMobileMenuOpen]);
+  }, [menuState.isMobileMenuOpen, closeAllMenus]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -129,28 +129,49 @@ const Header = () => {
     };
   }, [menuState.isMobileMenuOpen]);
 
+  // CSS Classes
   const linkClass = ({ isActive }) =>
-    `flex items-center gap-2 px-3 py-2 transition-all duration-300 relative font-medium ${
+    `flex items-center gap-2 px-3 py-2 transition-all duration-200 relative font-medium rounded-md ${
       isActive
-        ? "text-blue-600 after:absolute after:left-3 after:right-3 after:-bottom-2 after:h-0.5 after:bg-blue-600"
-        : "text-gray-700 hover:text-blue-600"
+        ? "text-blue-700 bg-blue-50 font-semibold"
+        : "text-gray-600 hover:text-blue-700 hover:bg-gray-50"
     }`;
 
   const mobileLinkClass = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 transition-all duration-300 rounded-lg ${
+    `flex items-center gap-3 px-4 py-3 transition-all duration-200 rounded-lg ${
       isActive
-        ? "bg-blue-50 text-blue-600 font-semibold border-l-4 border-blue-600"
-        : "text-gray-700 hover:bg-gray-50 hover:text-blue-600"
+        ? "bg-blue-50 text-blue-700 font-semibold border-l-4 border-blue-600"
+        : "text-gray-600 hover:bg-gray-50 hover:text-blue-700"
     }`;
 
   const handleImageError = () => {
     setImageError(true);
   };
 
+  // Programs dropdown data
+  const programCategories = [
+    {
+      title: "SSC Programs",
+      items: [
+        { name: "SSC Science", path: "/sscscience" },
+        { name: "SSC Humanities", path: "/sschumanities" },
+        { name: "SSC Business Studies", path: "/sscbusiness" },
+      ],
+    },
+    {
+      title: "HSC Programs",
+      items: [
+        { name: "HSC Science", path: "/hscscience" },
+        { name: "HSC Humanities", path: "/hschumanities" },
+        { name: "HSC Business Studies", path: "/hscbusiness" },
+      ],
+    },
+  ];
+
   return (
     <header
       className={`bg-white z-50 sticky top-0 transition-all duration-300 ${
-        scrolled ? "shadow-lg py-1" : "shadow-md py-2"
+        scrolled ? "shadow-lg py-0" : "shadow-md py-2"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -160,7 +181,7 @@ const Header = () => {
             <button
               ref={mobileMenuButtonRef}
               onClick={() => toggleMenuState("isMobileMenuOpen")}
-              className="lg:hidden text-gray-700 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500 rounded-md p-2"
+              className="lg:hidden text-gray-600 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md p-2"
               aria-label="Toggle main menu"
               aria-expanded={menuState.isMobileMenuOpen}
             >
@@ -172,19 +193,22 @@ const Header = () => {
             </button>
             <NavLink
               to="/"
-              className="text-2xl font-extrabold text-blue-700 flex items-center ml-4 md:ml-0"
+              className="flex items-center ml-4 md:ml-0"
+              onClick={closeAllMenus}
             >
-              <AiOutlineBook className="mr-2 text-blue-600" />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800">
-                Exam
-              </span>
-              <span className="text-orange-400">Hero</span>
+              <div className="flex items-center">
+                <AiOutlineBook className="mr-2 text-blue-700 text-2xl" />
+                <span className="text-2xl font-bold">
+                  <span className="text-blue-700">Exam</span>
+                  <span className="text-orange-500">Hero</span>
+                </span>
+              </div>
             </NavLink>
           </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:block">
-            <ul className="flex space-x-6 items-center">
+            <ul className="flex space-x-1 items-center">
               <li>
                 <NavLink to="/" className={linkClass}>
                   <AiOutlineHome className="text-lg" />
@@ -208,10 +232,10 @@ const Header = () => {
                 }
               >
                 <button
-                  className={`flex items-center gap-2 font-medium px-3 py-2 transition-all duration-300 group ${
+                  className={`flex items-center gap-2 font-medium px-3 py-2 transition-all duration-200 rounded-md group ${
                     menuState.isProgramsOpen
-                      ? "text-blue-600"
-                      : "text-gray-700 hover:text-blue-600"
+                      ? "text-blue-700 bg-blue-50"
+                      : "text-gray-600 hover:text-blue-700 hover:bg-gray-50"
                   }`}
                   aria-expanded={menuState.isProgramsOpen}
                   aria-haspopup="true"
@@ -219,85 +243,43 @@ const Header = () => {
                   <AiOutlineFundProjectionScreen className="text-lg" />
                   <span>Programs</span>
                   <AiOutlineCaretDown
-                    className={`w-4 h-4 transition-transform duration-300 ${
+                    className={`w-3 h-3 transition-transform duration-200 ${
                       menuState.isProgramsOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 <div
-                  className={`absolute top-full left-1/2 -translate-x-1/2 transform mt-2 bg-white shadow-xl rounded-xl w-[400px] p-6 grid grid-cols-2 gap-6 z-50 transition-all duration-300 ${
+                  className={`absolute top-full left-0 transform mt-1 bg-white shadow-xl rounded-lg w-96 p-4 grid grid-cols-2 gap-4 z-50 transition-all duration-200 border border-gray-100 ${
                     menuState.isProgramsOpen
-                      ? "opacity-100 scale-100"
+                      ? "opacity-100 scale-100 pointer-events-auto"
                       : "opacity-0 scale-95 pointer-events-none"
                   }`}
                 >
-                  <div>
-                    <h3 className="font-bold text-blue-700 border-b border-gray-200 pb-2 mb-3">
-                      SSC Programs
-                    </h3>
-                    <ul className="space-y-2">
-                      <li>
-                        <NavLink
-                          to="/programs/ssc/science"
-                          className="block p-2 rounded-lg hover:bg-blue-50 transition-all duration-200"
-                        >
-                          SSC Science
-                        </NavLink>
-                      </li>
-                      <li>
-                        <NavLink
-                          to="/programs/ssc/humanities"
-                          className="block p-2 rounded-lg hover:bg-blue-50 transition-all duration-200"
-                        >
-                          SSC Humanities
-                        </NavLink>
-                      </li>
-                      <li>
-                        <NavLink
-                          to="/programs/ssc/business"
-                          className="block p-2 rounded-lg hover:bg-blue-50 transition-all duration-200"
-                        >
-                          SSC Business Studies
-                        </NavLink>
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-blue-700 border-b border-gray-200 pb-2 mb-3">
-                      HSC Programs
-                    </h3>
-                    <ul className="space-y-2">
-                      <li>
-                        <NavLink
-                          to="/programs/hsc/science"
-                          className="block p-2 rounded-lg hover:bg-blue-50 transition-all duration-200"
-                        >
-                          HSC Science
-                        </NavLink>
-                      </li>
-                      <li>
-                        <NavLink
-                          to="/programs/hsc/humanities"
-                          className="block p-2 rounded-lg hover:bg-blue-50 transition-all duration-200"
-                        >
-                          HSC Humanities
-                        </NavLink>
-                      </li>
-                      <li>
-                        <NavLink
-                          to="/programs/hsc/business"
-                          className="block p-2 rounded-lg hover:bg-blue-50 transition-all duration-200"
-                        >
-                          HSC Business Studies
-                        </NavLink>
-                      </li>
-                    </ul>
-                  </div>
+                  {programCategories.map((category, index) => (
+                    <div key={index}>
+                      <h3 className="font-semibold text-blue-800 text-sm uppercase tracking-wide pb-2 mb-2 border-b border-gray-200">
+                        {category.title}
+                      </h3>
+                      <ul className="space-y-1">
+                        {category.items.map((item, itemIndex) => (
+                          <li key={itemIndex}>
+                            <NavLink
+                              to={item.path}
+                              className="block py-2 px-3 rounded-md text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200"
+                              onClick={closeAllMenus}
+                            >
+                              {item.name}
+                            </NavLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
               </li>
               <li>
                 <NavLink to="/allteachers" className={linkClass}>
-                  <AiOutlineUserAdd className="text-lg" />
+                  <AiOutlineTeam className="text-lg" />
                   Teachers
                 </NavLink>
               </li>
@@ -309,7 +291,7 @@ const Header = () => {
               </li>
               <li>
                 <NavLink to="/applyteacher" className={linkClass}>
-                  <AiOutlineTeam className="text-lg" />
+                  <AiOutlineUserAdd className="text-lg" />
                   Teach With Us
                 </NavLink>
               </li>
@@ -317,7 +299,7 @@ const Header = () => {
           </nav>
 
           {/* User/Auth Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             {user ? (
               <div
                 className="relative"
@@ -330,14 +312,14 @@ const Header = () => {
                 }
               >
                 <button
-                  className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
                   aria-label="User profile menu"
                   aria-expanded={menuState.isProfileOpen}
                   aria-haspopup="true"
                 >
-                  <div className="w-10 h-10 rounded-full border-2 border-blue-500 overflow-hidden flex items-center justify-center bg-gray-100">
+                  <div className="w-9 h-9 rounded-full border-2 border-blue-500 overflow-hidden flex items-center justify-center bg-gray-100">
                     {imageError || !user.photoURL ? (
-                      <span className="text-blue-600 font-semibold text-lg">
+                      <span className="text-blue-600 font-semibold text-sm">
                         {user.displayName?.charAt(0).toUpperCase() || "U"}
                       </span>
                     ) : (
@@ -351,48 +333,42 @@ const Header = () => {
                     )}
                   </div>
                   <AiOutlineCaretDown
-                    className={`w-4 h-4 transition-transform duration-300 ${
+                    className={`w-3 h-3 transition-transform duration-200 ${
                       menuState.isProfileOpen ? "rotate-180" : ""
                     }`}
                   />
                 </button>
                 <div
-                  className={`absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 z-50 border border-gray-200 transition-all duration-300 ${
+                  className={`absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-1 z-50 border border-gray-200 transition-all duration-200 ${
                     menuState.isProfileOpen
-                      ? "opacity-100 scale-100"
+                      ? "opacity-100 scale-100 pointer-events-auto"
                       : "opacity-0 scale-95 pointer-events-none"
                   }`}
                 >
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                  <div className="px-4 py-3 border-b border-gray-100">
+                    <p className="text-sm font-semibold text-gray-900 truncate">
                       {user.displayName || "User"}
                     </p>
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-gray-500 truncate mt-1">
                       {user.email}
                     </p>
                   </div>
                   <NavLink
                     to="/dashboard"
-                    className="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                    onClick={() => closeAllMenus()}
+                    className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 transition-colors"
+                    onClick={closeAllMenus}
                   >
-                    <AiOutlineDashboard className="text-lg" /> Dashboard
+                    <AiOutlineDashboard className="text-lg opacity-70" /> Dashboard
                   </NavLink>
-                  <NavLink
-                    to="/profile"
-                    className="flex items-center gap-2 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors"
-                    onClick={() => closeAllMenus()}
-                  >
-                    <AiOutlineUser className="text-lg" /> Profile
-                  </NavLink>
+               
                   <button
                     onClick={() => {
                       handleLogout();
                       closeAllMenus();
                     }}
-                    className="flex items-center gap-2 w-full px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors text-left border-t border-gray-100 mt-2 pt-2"
+                    className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors text-left border-t border-gray-100 mt-1"
                   >
-                    <AiOutlineLogout className="text-lg" /> Logout
+                    <AiOutlineLogout className="text-lg opacity-70" /> Logout
                   </button>
                 </div>
               </div>
@@ -400,15 +376,15 @@ const Header = () => {
               <div className="flex gap-2">
                 <NavLink
                   to="/login"
-                  className="btn btn-outline btn-primary hidden sm:inline-flex items-center transition-all duration-300 hover:bg-blue-600 hover:text-white"
+                  className="px-4 py-2 text-sm font-medium text-blue-700 hover:text-white hover:bg-blue-700 border border-blue-700 rounded-md transition-colors duration-200 flex items-center"
                 >
-                  <AiOutlineLogin className="mr-1" /> Login
+                  <AiOutlineLogin className="mr-1.5" /> Login
                 </NavLink>
                 <NavLink
                   to="/register"
-                  className="btn btn-primary hidden sm:inline-flex items-center transition-all duration-300 hover:bg-blue-700"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-colors duration-200 flex items-center shadow-sm"
                 >
-                  <AiOutlineUserAdd className="mr-1" /> Register
+                  <AiOutlineUserAdd className="mr-1.5" /> Register
                 </NavLink>
               </div>
             )}
@@ -419,161 +395,181 @@ const Header = () => {
       {/* Mobile Menu Overlay */}
       <div
         className={`lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
-          menuState.isMobileMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          menuState.isMobileMenuOpen
+            ? "opacity-100"
+            : "opacity-0 pointer-events-none"
         }`}
         onClick={closeAllMenus}
+        aria-hidden={!menuState.isMobileMenuOpen}
       />
 
       {/* Mobile Menu Sidebar */}
       <div
         ref={mobileMenuRef}
-        className={`lg:hidden fixed inset-y-0 left-0 w-64 bg-white z-50 transform transition-transform duration-300 ease-in-out shadow-xl ${
+        className={`lg:hidden fixed inset-y-0 left-0 w-80 max-w-full bg-white z-50 transform transition-transform duration-300 ease-in-out shadow-xl ${
           menuState.isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
+        aria-modal="true"
+        role="dialog"
+        aria-label="Main navigation"
       >
-        <div className="py-4 px-4 h-full flex flex-col">
-          <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+        <div className="flex flex-col h-full">
+          <div className="flex justify-between items-center py-4 px-6 border-b border-gray-200">
             <NavLink
               to="/"
-              className="text-2xl font-extrabold text-blue-700 flex items-center"
+              className="flex items-center"
               onClick={closeAllMenus}
             >
-              <AiOutlineBook className="mr-2 text-blue-600" />
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800">
-                Exam
-              </span>
-              <span className="text-orange-400">Hero</span>
+              <div className="flex items-center">
+                <AiOutlineBook className="mr-2 text-blue-700 text-2xl" />
+                <span className="text-xl font-bold">
+                  <span className="text-blue-700">Exam</span>
+                  <span className="text-orange-500">Hero</span>
+                </span>
+              </div>
             </NavLink>
             <button
               onClick={closeAllMenus}
-              className="p-2 text-gray-700 rounded-md hover:bg-gray-100"
+              className="p-2 text-gray-600 rounded-md hover:bg-gray-100"
               aria-label="Close menu"
             >
-              <AiOutlineClose className="h-6 w-6" />
+              <AiOutlineClose className="h-5 w-5" />
             </button>
           </div>
-          <div className="flex-1 overflow-y-auto mt-4">
-            <ul className="menu space-y-1">
+          <div className="flex-1 overflow-y-auto py-4 px-2">
+            <ul className="space-y-1">
               <li>
-                <NavLink to="/" className={mobileLinkClass} onClick={closeAllMenus}>
+                <NavLink
+                  to="/"
+                  className={mobileLinkClass}
+                  onClick={closeAllMenus}
+                >
                   <AiOutlineHome className="text-xl" /> Home
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/about" className={mobileLinkClass} onClick={closeAllMenus}>
+                <NavLink
+                  to="/about"
+                  className={mobileLinkClass}
+                  onClick={closeAllMenus}
+                >
                   <AiOutlineInfoCircle className="text-xl" /> About
                 </NavLink>
               </li>
               <li>
                 <div
-                  className={`rounded-lg ${menuState.activeMobileSubmenu === "programs" ? "bg-blue-50" : ""}`}
+                  className={`rounded-lg ${
+                    menuState.activeMobileSubmenu === "programs"
+                      ? "bg-blue-50"
+                      : ""
+                  }`}
                 >
                   <button
                     onClick={() => toggleMobileSubmenu("programs")}
-                    className="flex items-center justify-between w-full px-4 py-3 text-gray-700 font-medium rounded-lg hover:bg-gray-50"
+                    className="flex items-center justify-between w-full px-4 py-3 text-gray-600 font-medium rounded-lg hover:bg-gray-50"
+                    aria-expanded={menuState.activeMobileSubmenu === "programs"}
                   >
                     <div className="flex items-center gap-3">
                       <AiOutlineFundProjectionScreen className="text-xl" />
                       <span>Programs</span>
                     </div>
                     <AiOutlineCaretDown
-                      className={`w-4 h-4 transition-transform duration-300 ${
-                        menuState.activeMobileSubmenu === "programs" ? "rotate-180" : ""
+                      className={`w-4 h-4 transition-transform duration-200 ${
+                        menuState.activeMobileSubmenu === "programs"
+                          ? "rotate-180"
+                          : ""
                       }`}
                     />
                   </button>
                   <div
-                    className={`overflow-hidden transition-max-h duration-300 ease-in-out ${
+                    className={`overflow-hidden transition-all duration-200 ${
                       menuState.activeMobileSubmenu === "programs"
                         ? "max-h-96"
                         : "max-h-0"
                     }`}
                   >
-                    <div className="pl-6 py-2 space-y-1">
-                      <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide pl-3 py-1">
-                        SSC Programs
-                      </div>
-                      <NavLink
-                        to="/programs/ssc/science"
-                        className={mobileLinkClass}
-                        onClick={closeAllMenus}
-                      >
-                        SSC Science
-                      </NavLink>
-                      <NavLink
-                        to="/programs/ssc/humanities"
-                        className={mobileLinkClass}
-                        onClick={closeAllMenus}
-                      >
-                        SSC Humanities
-                      </NavLink>
-                      <NavLink
-                        to="/programs/ssc/business"
-                        className={mobileLinkClass}
-                        onClick={closeAllMenus}
-                      >
-                        SSC Business Studies
-                      </NavLink>
-
-                      <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide pl-3 py-1 mt-2">
-                        HSC Programs
-                      </div>
-                      <NavLink
-                        to="/programs/hsc/science"
-                        className={mobileLinkClass}
-                        onClick={closeAllMenus}
-                      >
-                        HSC Science
-                      </NavLink>
-                      <NavLink
-                        to="/programs/hsc/humanities"
-                        className={mobileLinkClass}
-                        onClick={closeAllMenus}
-                      >
-                        HSC Humanities
-                      </NavLink>
-                      <NavLink
-                        to="/programs/hsc/business"
-                        className={mobileLinkClass}
-                        onClick={closeAllMenus}
-                      >
-                        HSC Business Studies
-                      </NavLink>
+                    <div className="pl-11 pr-4 py-2 space-y-1">
+                      {programCategories.map((category, index) => (
+                        <div key={index} className="mb-2">
+                          <div className="text-xs font-semibold text-blue-700 uppercase tracking-wide pl-3 py-2">
+                            {category.title}
+                          </div>
+                          <div className="space-y-1">
+                            {category.items.map((item, itemIndex) => (
+                              <NavLink
+                                key={itemIndex}
+                                to={item.path}
+                                className="block py-2 px-3 rounded-md text-sm text-gray-600 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-200"
+                                onClick={closeAllMenus}
+                              >
+                                {item.name}
+                              </NavLink>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
               </li>
               <li>
-                <NavLink to="/allteachers" className={mobileLinkClass} onClick={closeAllMenus}>
+                <NavLink
+                  to="/allteachers"
+                  className={mobileLinkClass}
+                  onClick={closeAllMenus}
+                >
                   <AiOutlineTeam className="text-xl" /> Teachers
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/contact" className={mobileLinkClass} onClick={closeAllMenus}>
+                <NavLink
+                  to="/contact"
+                  className={mobileLinkClass}
+                  onClick={closeAllMenus}
+                >
                   <AiOutlinePhone className="text-xl" /> Contact
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/applyteacher" className={mobileLinkClass} onClick={closeAllMenus}>
-                  <AiOutlineTeam className="text-xl" /> Teach With Us
+                <NavLink
+                  to="/applyteacher"
+                  className={mobileLinkClass}
+                  onClick={closeAllMenus}
+                >
+                  <AiOutlineUserAdd className="text-xl" /> Teach With Us
                 </NavLink>
               </li>
               {user && (
-                <li>
-                  <NavLink to="/dashboard" className={mobileLinkClass} onClick={closeAllMenus}>
-                    <AiOutlineDashboard className="text-xl" /> Dashboard
-                  </NavLink>
-                </li>
+                <>
+                  <li>
+                    <NavLink
+                      to="/dashboard"
+                      className={mobileLinkClass}
+                      onClick={closeAllMenus}
+                    >
+                      <AiOutlineDashboard className="text-xl" /> Dashboard
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/profile"
+                      className={mobileLinkClass}
+                      onClick={closeAllMenus}
+                    >
+                      <AiOutlineUser className="text-xl" /> Profile
+                    </NavLink>
+                  </li>
+                </>
               )}
             </ul>
           </div>
           {/* Mobile Auth/User Section */}
-          <div className="mt-6 pt-4 border-t border-gray-200">
+          <div className="mt-auto p-4 border-t border-gray-200 bg-gray-50">
             {user ? (
               <div className="flex flex-col items-center gap-4">
-                <div className="w-20 h-20 rounded-full border-2 border-blue-500 overflow-hidden flex items-center justify-center bg-gray-100">
+                <div className="w-16 h-16 rounded-full border-2 border-blue-500 overflow-hidden flex items-center justify-center bg-gray-100">
                   {imageError || !user.photoURL ? (
-                    <span className="text-blue-600 font-semibold text-2xl">
+                    <span className="text-blue-600 font-semibold text-xl">
                       {user.displayName?.charAt(0).toUpperCase() || "U"}
                     </span>
                   ) : (
@@ -587,26 +583,19 @@ const Header = () => {
                   )}
                 </div>
                 <div className="text-center">
-                  <p className="font-semibold text-gray-900 truncate">
+                  <p className="font-semibold text-gray-900">
                     {user.displayName || "User"}
                   </p>
-                  <p className="text-sm text-gray-500 truncate">
+                  <p className="text-sm text-gray-500 mt-1">
                     {user.email}
                   </p>
                 </div>
-                <NavLink
-                  to="/profile"
-                  className="btn btn-outline btn-primary w-full"
-                  onClick={closeAllMenus}
-                >
-                  <AiOutlineUser className="mr-2" /> Profile
-                </NavLink>
                 <button
                   onClick={() => {
                     handleLogout();
                     closeAllMenus();
                   }}
-                  className="btn btn-primary w-full"
+                  className="w-full py-2.5 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors duration-200 flex items-center justify-center"
                 >
                   <AiOutlineLogout className="mr-2" /> Logout
                 </button>
@@ -615,14 +604,14 @@ const Header = () => {
               <div className="space-y-3">
                 <NavLink
                   to="/login"
-                  className="btn btn-outline btn-primary w-full"
+                  className="block w-full py-2.5 px-4 text-center text-blue-700 border border-blue-700 rounded-md hover:bg-blue-700 hover:text-white transition-colors duration-200 flex items-center justify-center"
                   onClick={closeAllMenus}
                 >
                   <AiOutlineLogin className="mr-2" /> Login
                 </NavLink>
                 <NavLink
                   to="/register"
-                  className="btn btn-primary w-full"
+                  className="block w-full py-2.5 px-4 text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 transition-colors duration-200 flex items-center justify-center"
                   onClick={closeAllMenus}
                 >
                   <AiOutlineUserAdd className="mr-2" /> Register
