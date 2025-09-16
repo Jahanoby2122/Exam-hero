@@ -2,55 +2,61 @@ import React, { useState, useEffect } from 'react';
 import { FaBook, FaChalkboardTeacher, FaDownload, FaMobileAlt, FaQrcode, FaTimes, FaDatabase, FaVideo, FaClock, FaUserTie } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
-const SSC_SCIENCE_SUBJECTS = [
+const HSC_HUMANITIES_SUBJECTS = [
   {
     id: 1,
-    name: "পদার্থবিজ্ঞান",
-    description: "Physics এর সম্পূর্ণ পাঠ্যক্রম ও গুরুত্বপূর্ণ সূত্র",
-    chapters: 14,
-    color: "from-blue-500 to-indigo-500",
-    icon: "⚛️"
+    name: "ইতিহাস",
+    description: "বাংলাদেশ ও বিশ্ব ইতিহাসের বিস্তৃত HSC পাঠ্যক্রম",
+    chapters: 16,
+    color: "from-amber-500 to-orange-500",
+    icon: "📜"
   },
   {
     id: 2,
-    name: "রসায়ন",
-    description: "Chemistry এর মৌলিক ধারণা ও পরীক্ষামূলক সমাধান",
-    chapters: 12,
-    color: "from-red-500 to-pink-500",
-    icon: "🧪"
+    name: "ভূগোল",
+    description: "প্রাকৃতিক ও মানব ভূগোল, পরিবেশ ও উন্নয়ন",
+    chapters: 14,
+    color: "from-teal-500 to-cyan-500",
+    icon: "🌍"
   },
   {
     id: 3,
-    name: "জীববিজ্ঞান",
-    description: "Biology এর গুরুত্বপূর্ণ টপিক ও নোটস",
-    chapters: 16,
-    color: "from-green-500 to-emerald-500",
-    icon: "🧬"
+    name: "পৌরনীতি",
+    description: "রাষ্ট্রবিজ্ঞান ও সরকারের মৌলিক ধারণা",
+    chapters: 12,
+    color: "from-blue-500 to-indigo-500",
+    icon: "🏛️"
   },
   {
     id: 4,
-    name: "গণিত",
-    description: "Mathematics এর সব মৌলিক ও Advanced বিষয়",
-    chapters: 18,
-    color: "from-yellow-500 to-amber-500",
-    icon: "📐"
+    name: "অর্থনীতি",
+    description: "Micro ও Macro Economics এর Advanced ধারণা",
+    chapters: 14,
+    color: "from-green-500 to-emerald-500",
+    icon: "💹"
   },
   {
     id: 5,
-    name: "উচ্চতর গণিত",
-    description: "Advanced Mathematics এবং Problem Solving",
+    name: "সাহিত্য",
+    description: "বাংলা ও English সাহিত্যের বিশ্লেষণমূলক পাঠ",
+    chapters: 18,
+    color: "from-rose-500 to-pink-500",
+    icon: "📖"
+  },
+  {
+    id: 6,
+    name: "যুক্তিবিদ্যা",
+    description: "Critical Thinking ও Logic বিষয়ক আলোচনা",
     chapters: 10,
     color: "from-purple-500 to-violet-500",
-    icon: "📊"
+    icon: "🧠"
   }
 ];
 
 const Modal = ({ isOpen, onClose, children }) => {
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : 'unset';
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -71,9 +77,7 @@ const Modal = ({ isOpen, onClose, children }) => {
 };
 
 const AppDownloadModal = ({ isOpen, onClose }) => {
-  const handleComingSoon = () => {
-    toast.success("আমাদের অ্যাপ শীঘ্রই আসছে! অনুগ্রহ করে আমাদের সঙ্গে থাকুন।");
-  };
+  const handleComingSoon = () => toast.success("আমাদের অ্যাপ শীঘ্রই আসছে! অনুগ্রহ করে আমাদের সঙ্গে থাকুন।");
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -86,7 +90,7 @@ const AppDownloadModal = ({ isOpen, onClose }) => {
             এক্সাম হিরো অ্যাপ ডাউনলোড করুন
           </h3>
           <p className="text-gray-600 text-sm md:text-base">
-            SSC Science এর সম্পূর্ণ পাঠ্যক্রম পেতে এখনই ডাউনলোড করুন। আমাদের অ্যাপ শীঘ্রই আসছে!
+            HSC Humanities এর সম্পূর্ণ পাঠ্যক্রম পেতে এখনই ডাউনলোড করুন। আমাদের অ্যাপ শীঘ্রই আসছে!
           </p>
         </div>
 
@@ -156,7 +160,7 @@ const SubjectCard = ({ subject, onOpenModal }) => (
       <h3 className="text-xl font-bold text-gray-800 mb-2">{subject.name}</h3>
       <p className="text-gray-600 mb-4">{subject.description}</p>
       <div className="flex justify-between items-center mb-4">
-        <span className="px-2 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded">SSC Science</span>
+        <span className="px-2 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded">HSC Humanities</span>
       </div>
       <button 
         onClick={() => onOpenModal(subject)}
@@ -205,7 +209,7 @@ const SubjectDetailModal = ({ isOpen, onClose, subject }) => {
   );
 };
 
-const SSCScience = () => {
+const HSCHumanities = () => {
   const [isAppModalOpen, setIsAppModalOpen] = useState(false);
   const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -220,10 +224,10 @@ const SSCScience = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">
-            SSC <span className="text-blue-600">Science</span> Program
+            HSC <span className="text-blue-600">Humanities</span> Program
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            বৈজ্ঞানিক বিভাগের সম্পূর্ণ পাঠ্যক্রম একত্রে। নোটস, মডেল টেস্ট এবং এক্সপার্ট গাইডেন্স সহ প্রস্তুতি নিন সেরা ফলাফলের জন্য।
+            HSC Humanities এর Advanced পাঠ্যক্রম, নোটস এবং মডেল টেস্ট সহ প্রস্তুতি নিন সেরা ফলাফলের জন্য।
           </p>
         </div>
 
@@ -231,50 +235,16 @@ const SSCScience = () => {
           <h2 className="text-3xl font-bold text-center text-gray-800 mb-2">বিষয়সমূহ</h2>
           <p className="text-gray-600 text-center mb-12">নিচের বিষয়গুলো থেকে পছন্দসই বিষয় নির্বাচন করুন</p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {SSC_SCIENCE_SUBJECTS.map(subject => (
+            {HSC_HUMANITIES_SUBJECTS.map(subject => (
               <SubjectCard key={subject.id} subject={subject} onOpenModal={openSubjectModal} />
             ))}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-lg p-8 mb-16">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-12">SSC Science এর বিশেষ সুবিধা</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center p-6 bg-blue-50 rounded-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-full mb-4">
-                <FaBook className="text-xl" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">বিষয়ভিত্তিক নোটস</h3>
-              <p className="text-gray-600">সহজে বুঝার জন্য বাংলা নোটস</p>
-            </div>
-            <div className="text-center p-6 bg-green-50 rounded-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
-                <FaChalkboardTeacher className="text-xl" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">Expert Teachers</h3>
-              <p className="text-gray-600">অভিজ্ঞ শিক্ষকদের গাইডলাইন</p>
-            </div>
-            <div className="text-center p-6 bg-amber-50 rounded-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 text-amber-600 rounded-full mb-4">
-                <FaMobileAlt className="text-xl" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">মোবাইল অ্যাপ</h3>
-              <p className="text-gray-600">যেকোনো সময় পড়ার সুযোগ</p>
-            </div>
-            <div className="text-center p-6 bg-purple-50 rounded-xl">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 text-purple-600 rounded-full mb-4">
-                <FaDownload className="text-xl" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">অফলাইন এক্সেস</h3>
-              <p className="text-gray-600">ইন্টারনেট ছাড়াই পড়ুন</p>
-            </div>
           </div>
         </div>
 
         <div className="text-center bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl p-12 text-white">
           <h2 className="text-3xl font-bold mb-4">আজই শুরু করুন আপনার প্রস্তুতি</h2>
           <p className="text-blue-100 mb-8 max-w-2xl mx-auto">
-            SSC Science এর সম্পূর্ণ পাঠ্যক্রম, নোটস এবং মডেল টেস্ট পেতে এখনই Exam Hero অ্যাপ ডাউনলোড করুন
+            HSC Humanities এর সম্পূর্ণ পাঠ্যক্রম, নোটস এবং মডেল টেস্ট পেতে এখনই Exam Hero অ্যাপ ডাউনলোড করুন
           </p>
           <button 
             onClick={openAppModal}
@@ -292,4 +262,4 @@ const SSCScience = () => {
   );
 };
 
-export default SSCScience;
+export default HSCHumanities;

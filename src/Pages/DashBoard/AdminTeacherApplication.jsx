@@ -48,6 +48,7 @@ const AdminTeacherApplication = () => {
     fetchTeachers();
   }, []);
 
+  // শিক্ষকের আবেদন স্ট্যাটাস আপডেট ফাংশন
   const updateStatus = async (id, status, comment = "") => {
     try {
       await axios.patch(`${API_URL}/teachers/${id}/status`, { status, adminComment: comment });
@@ -68,6 +69,43 @@ const AdminTeacherApplication = () => {
         icon: 'error',
         title: 'ত্রুটি!',
         text: 'স্ট্যাটাস আপডেট করতে সমস্যা হয়েছে।'
+      });
+    }
+  };
+
+  // শিক্ষক ডিলিট ফাংশন
+  const deleteTeacher = async (id) => {
+    try {
+      const result = await Swal.fire({
+        title: 'আপনি কি নিশ্চিত?',
+        text: "এই শিক্ষকের আবেদনটি সম্পূর্ণভাবে মুছে ফেলা হবে!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'হ্যাঁ, মুছে ফেলুন!',
+        cancelButtonText: 'বাতিল করুন'
+      });
+      
+      if (result.isConfirmed) {
+        await axios.delete(`${API_URL}/teachers/${id}`);
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'মুছে ফেলা হয়েছে!',
+          text: 'শিক্ষকের আবেদনটি সফলভাবে মুছে ফেলা হয়েছে।',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        
+        fetchTeachers(); // Refresh list after deletion
+      }
+    } catch (error) {
+      console.error("❌ Failed to delete teacher", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'ত্রুটি!',
+        text: 'শিক্ষক মুছে ফেলতে সমস্যা হয়েছে।'
       });
     }
   };
@@ -443,28 +481,41 @@ const AdminTeacherApplication = () => {
                     </div>
                   )}
                   
-                  {teacher.status === "pending" && (
-                    <div className="mt-5 flex gap-2">
-                      <button
-                        onClick={() => handleApprove(teacher)}
-                        className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                        অনুমোদন
-                      </button>
-                      <button
-                        onClick={() => handleReject(teacher)}
-                        className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                        প্রত্যাখ্যান
-                      </button>
-                    </div>
-                  )}
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {teacher.status === "pending" && (
+                      <>
+                        <button
+                          onClick={() => handleApprove(teacher)}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                          অনুমোদন
+                        </button>
+                        <button
+                          onClick={() => handleReject(teacher)}
+                          className="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                          প্রত্যাখ্যান
+                        </button>
+                      </>
+                    )}
+                    
+                    {/* ডিলিট বাটন - সকল স্ট্যাটাসের জন্য দেখাবে */}
+                    <button
+                      onClick={() => deleteTeacher(teacher._id)}
+                      className="flex-1 bg-gray-600 hover:bg-gray-700 text-white py-2.5 rounded-lg transition-all duration-200 flex items-center justify-center shadow-sm hover:shadow-md"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      মুছুন
+                    </button>
+                  </div>
                   
                   <div className="mt-4 pt-3 border-t border-gray-100">
                     <button 
@@ -590,6 +641,21 @@ const AdminTeacherApplication = () => {
                     </button>
                   </>
                 )}
+                
+                {/* ডিটেইল মোডালে ডিলিট বাটন */}
+                <button
+                  onClick={() => {
+                    deleteTeacher(selectedTeacher._id);
+                    setSelectedTeacher(null);
+                  }}
+                  className="px-4 py-2.5 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 shadow-sm hover:shadow-md flex items-center"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                  মুছুন
+                </button>
+                
                 <button
                   onClick={() => setSelectedTeacher(null)}
                   className="px-4 py-2.5 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all duration-200"

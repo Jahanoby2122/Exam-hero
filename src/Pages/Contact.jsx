@@ -213,8 +213,8 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">কর্মঘণ্টা</h3>
-                      <p className="text-gray-600">শনিবার-বৃহস্পতিবার: সকাল ৯টা - রাত ১০টা</p>
-                      <p className="text-gray-600">শুক্রবার: বন্ধ</p>
+                      <p className="text-gray-600">শনিবার-শুক্রবার: সকাল ৯টা - রাত ১০টা</p>
+                     
                     </div>
                   </div>
                 </div>
@@ -372,21 +372,18 @@ const Contact = () => {
                     )}
                   </div>
                   <div>
-                    <label className="label font-semibold">বিষয় নির্বাচন*</label>
+                    <label className="label font-semibold">শিক্ষার বিভাগ</label>
                     <select 
                       name="subject" 
                       value={formData.subject} 
                       onChange={handleChange} 
                       className={`select select-bordered w-full bg-gray-50 ${formErrors.subject ? 'select-error' : ''} rounded-lg`}
                     >
-                      <option value="">বিষয় নির্বাচন করুন</option>
-                      <option value="Physics">পদার্থবিজ্ঞান</option>
-                      <option value="Chemistry">রসায়ন</option>
-                      <option value="Mathematics">গণিত</option>
-                      <option value="Biology">জীববিজ্ঞান</option>
-                      <option value="English">ইংরেজি</option>
-                      <option value="Bangla">বাংলা</option>
-                      <option value="Other">অন্যান্য</option>
+                      
+                      <option value="Science">বিজ্ঞান</option>
+                      <option value="Arts">মানবিক</option>
+                      <option value="Commerce">বাণিজ্য</option>
+                      
                     </select>
                     {formErrors.subject && (
                       <p className="text-error text-sm flex items-center mt-1">
@@ -448,14 +445,7 @@ const Contact = () => {
           </div>
         </div>
 
-        {/* Call to Action */}
-        <div className="mt-20 text-center">
-          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} className="bg-gradient-to-r from-primary to-secondary text-white py-12 rounded-2xl shadow-xl">
-            <h2 className="text-3xl font-bold mb-4">আজই যোগ দিন</h2>
-            <p className="mb-6 text-lg max-w-2xl mx-auto">সেরা শিক্ষকের কাছ থেকে পড়াশোনা শুরু করুন এবং আপনার সাফল্য নিশ্চিত করুন।</p>
-            <button className="btn btn-accent rounded-lg px-8">এখনই রেজিস্টার করুন</button>
-          </motion.div>
-        </div>
+   
       </div>
     </div>
   );

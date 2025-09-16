@@ -17,8 +17,13 @@ import {
   FaTimes,
   FaGooglePlay,
   FaAppStore,
-  FaQrcode
+  FaQrcode,
+  FaDatabase,
+  FaVideo,
+  FaUserTie,
+  FaMobileAlt
 } from 'react-icons/fa';
+import { toast } from 'react-toastify';
 
 const cards = [
   {
@@ -126,67 +131,59 @@ const Modal = ({ isOpen, onClose, title, children }) => {
 };
 
 const AppDownloadModal = ({ isOpen, onClose }) => {
+  const handleComingSoon = () => toast.success("আমাদের অ্যাপ শীঘ্রই আসছে! অনুগ্রহ করে আমাদের সঙ্গে থাকুন।");
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="এক্সাম হিরো অ্যাপ ডাউনলোড">
-      <div className="p-8">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-3xl mb-6">
-            <FaRegStar className="text-2xl" />
+    <Modal isOpen={isOpen} onClose={onClose}>
+      <div className="p-6 md:p-8 max-w-lg mx-auto">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-3xl mb-4">
+            <FaMobileAlt className="text-2xl md:text-3xl" />
           </div>
-          <h3 className="text-3xl font-bold text-gray-800 mb-4">এক্সাম হিরো অ্যাপ ডাউনলোড করুন</h3>
-          <p className="text-gray-600 mb-6">
-            মোবাইল অ্যাপে এক্সাম হিরোর সকল সুবিধা উপভোগ করুন এবং আপনার পড়াশোনাকে আরও কার্যকর করুন
+          <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+            এক্সাম হিরো অ্যাপ ডাউনলোড করুন
+          </h3>
+          <p className="text-gray-600 text-sm md:text-base">
+            HSC Humanities এর সম্পূর্ণ পাঠ্যক্রম পেতে এখনই ডাউনলোড করুন। আমাদের অ্যাপ শীঘ্রই আসছে!
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-gray-50 p-6 rounded-xl">
-            <h4 className="font-semibold text-lg mb-4 text-gray-800">অ্যান্ড্রয়েড ব্যবহারকারীদের জন্য</h4>
-            <div className="flex items-center justify-center mb-4">
-              <div className="bg-white p-4 rounded-lg shadow-md">
-                <FaQrcode className="text-4xl text-blue-600" />
-              </div>
-            </div>
-            <p className="text-sm text-gray-600 mb-4 text-center">QR কোড স্ক্যান করুন অথবা Google Play থেকে ডাউনলোড করুন</p>
-            <button className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-lg font-medium flex items-center justify-center hover:shadow-lg transition-shadow">
-              <FaGooglePlay className="mr-2" />
-              Google Play
-            </button>
-          </div>
+        <div className="grid sm:grid-cols-2 gap-4 mb-6">
+          <button 
+            onClick={handleComingSoon} 
+            className="flex flex-col items-center justify-center p-4 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-md transition"
+          >
+            <FaQrcode className="text-4xl mb-2" />
+            <span className="font-medium">Google Play</span>
+          </button>
 
-          <div className="bg-gray-50 p-6 rounded-xl">
-            <h4 className="font-semibold text-lg mb-4 text-gray-800">iOS ব্যবহারকারীদের জন্য</h4>
-            <div className="flex items-center justify-center mb-4">
-              <div className="bg-white p-4 rounded-lg shadow-md">
-                <FaQrcode className="text-4xl text-blue-600" />
-              </div>
-            </div>
-            <p className="text-sm text-gray-600 mb-4 text-center">QR কোড স্ক্যান করুন অথবা App Store থেকে ডাউনলোড করুন</p>
-            <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-lg font-medium flex items-center justify-center hover:shadow-lg transition-shadow">
-              <FaAppStore className="mr-2" />
-              App Store
-            </button>
-          </div>
+          <button 
+            onClick={handleComingSoon} 
+            className="flex flex-col items-center justify-center p-4 bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-md transition"
+          >
+            <FaQrcode className="text-4xl mb-2" />
+            <span className="font-medium">App Store</span>
+          </button>
         </div>
 
         <div className="bg-blue-50 p-6 rounded-xl mb-6">
           <h4 className="font-semibold text-lg mb-3 text-blue-800">অ্যাপের বিশেষ সুবিধাসমূহ</h4>
           <ul className="space-y-2">
             <li className="flex items-center">
-              <FaRegCheckCircle className="text-green-500 mr-2" />
-              <span className="text-gray-700">অফলাইন মোড</span>
+              <FaDatabase className="text-blue-500 mr-2" />
+              <span className="text-gray-700">লক্ষাধিক প্রশ্নের ডাটাবেজ</span>
             </li>
             <li className="flex items-center">
-              <FaRegCheckCircle className="text-green-500 mr-2" />
-              <span className="text-gray-700">পুষ notifications</span>
+              <FaVideo className="text-red-500 mr-2" />
+              <span className="text-gray-700">ভিডিও সমাধান</span>
             </li>
             <li className="flex items-center">
-              <FaRegCheckCircle className="text-green-500 mr-2" />
-              <span className="text-gray-700">দ্রুত এক্সেস</span>
+              <FaClock className="text-purple-500 mr-2" />
+              <span className="text-gray-700">লাইভ এক্সাম</span>
             </li>
             <li className="flex items-center">
-              <FaRegCheckCircle className="text-green-500 mr-2" />
-              <span className="text-gray-700">বেটার পারফরমেন্স</span>
+              <FaUserTie className="text-green-500 mr-2" />
+              <span className="text-gray-700">মেন্টর সাথে লাইভ চ্যাট</span>
             </li>
           </ul>
         </div>
@@ -194,7 +191,7 @@ const AppDownloadModal = ({ isOpen, onClose }) => {
         <div className="text-center">
           <button 
             onClick={onClose}
-            className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+            className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors"
           >
             পরে দেখবো
           </button>
@@ -203,6 +200,7 @@ const AppDownloadModal = ({ isOpen, onClose }) => {
     </Modal>
   );
 };
+
 
 const EducationalGrid = () => {
   const cardRefs = useRef([]);
@@ -253,16 +251,12 @@ const EducationalGrid = () => {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header Section */}
         <div className="text-center mb-20">
-      
           <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
             আমাদের <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">বিশেষ সুবিধাসমূহ</span>
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-10">
             Exam Hero অ্যাপে রয়েছে নানাবিধ সুবিধা যা আপনার শিক্ষাজীবনকে করবে আরও সহজ এবং কার্যকর
           </p>
-          
-  
-         
         </div>
         
         {/* Cards Grid */}
