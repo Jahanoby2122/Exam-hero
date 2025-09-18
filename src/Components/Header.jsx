@@ -199,18 +199,18 @@ const UserProfileDropdown = React.memo(({
   );
 });
 
-const AuthButtons = React.memo(() => {
+const AuthButtons = React.memo(({ isMobile = false }) => {
   return (
-    <div className="flex gap-2">
+    <div className={`flex ${isMobile ? 'flex-col space-y-2 w-full' : 'gap-2'}`}>
       <NavLink
         to="/login"
-        className="px-4 py-2 text-sm font-medium text-blue-700 hover:text-white hover:bg-blue-700 border border-blue-700 rounded-md transition-colors duration-200 flex items-center"
+        className={`px-4 py-2 text-sm font-medium text-blue-700 hover:text-white hover:bg-blue-700 border border-blue-700 rounded-md transition-colors duration-200 flex items-center justify-center ${isMobile ? 'w-full' : ''}`}
       >
         <AiOutlineLogin className="mr-1.5" /> Login
       </NavLink>
       <NavLink
         to="/register"
-        className="px-4 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-colors duration-200 flex items-center shadow-sm"
+        className={`px-4 py-2 text-sm font-medium text-white bg-blue-700 hover:bg-blue-800 rounded-md transition-colors duration-200 flex items-center justify-center ${isMobile ? 'w-full' : ''} shadow-sm`}
       >
         <AiOutlineUserAdd className="mr-1.5" /> Register
       </NavLink>
@@ -262,6 +262,7 @@ const MobileMenu = React.memo(({
             >
               <div className="flex items-center">
                 <img className="w-10 h-10 object-contain" src={img} alt="Exam Hero Logo" />
+                 <span className="text-lg font-bold text-orange-500 leading-4"><span className="text-blue-500">Exam</span> Hero</span>
                 
               </div>
             </NavLink>
@@ -438,27 +439,27 @@ const MobileMenu = React.memo(({
                 </button>
               </div>
             ) : (
-              <div className="space-y-3">
-                <NavLink
-                  to="/login"
-                  className="block w-full py-2.5 px-4 text-center text-blue-700 border border-blue-700 rounded-md hover:bg-blue-700 hover:text-white transition-colors duration-200 flex items-center justify-center"
-                  onClick={closeAllMenus}
-                >
-                  <AiOutlineLogin className="mr-2" /> Login
-                </NavLink>
-                <NavLink
-                  to="/register"
-                  className="block w-full py-2.5 px-4 text-center text-white bg-blue-700 rounded-md hover:bg-blue-800 transition-colors duration-200 flex items-center justify-center"
-                  onClick={closeAllMenus}
-                >
-                  <AiOutlineUserAdd className="mr-2" /> Register
-                </NavLink>
-              </div>
+              <AuthButtons isMobile={true} />
             )}
           </div>
         </div>
       </div>
     </>
+  );
+});
+
+// Mobile Auth Buttons Component for Header - শুধুমাত্র Login বোতাম থাকবে
+const MobileAuthButtons = React.memo(() => {
+  return (
+    <div className="lg:hidden flex gap-2">
+      {/* শুধুমাত্র Login বোতাম রাখা হয়েছে, Register বোতাম সরিয়ে দেওয়া হয়েছে */}
+      <NavLink
+        to="/login"
+        className="px-3 py-1.5 text-xs font-medium text-blue-700 hover:text-white hover:bg-blue-700 border border-blue-700 rounded-md transition-colors duration-200 flex items-center"
+      >
+        <AiOutlineLogin className="mr-1" /> Login
+      </NavLink>
+    </div>
   );
 });
 
@@ -651,8 +652,7 @@ const Header = () => {
               <div className="flex items-center">
                 <img className="w-10 h-10 object-contain md:w-12 md:h-12" src={img} alt="Exam Hero Logo" />
                 <div className="flex flex-col ml-2">
-                 
-                  <span className="text-lg font-bold text-orange-500 leading-4">Hero</span>
+                  <span className="text-lg font-bold text-orange-500 leading-4"><span className="text-blue-500">Exam</span> Hero</span>
                 </div>
               </div>
             </NavLink>
@@ -671,18 +671,41 @@ const Header = () => {
           {/* User/Auth Buttons */}
           <div className="flex items-center gap-2">
             {user ? (
-              <UserProfileDropdown
-                user={user}
-                imageError={imageError}
-                handleImageError={handleImageError}
-                menuState={menuState}
-                profileRef={profileRef}
-                setMenuState={setMenuState}
-                closeAllMenus={closeAllMenus}
-                handleLogout={handleLogout}
-              />
+              <>
+                {/* Show profile dropdown on desktop */}
+                <div className="hidden lg:block">
+                  <UserProfileDropdown
+                    user={user}
+                    imageError={imageError}
+                    handleImageError={handleImageError}
+                    menuState={menuState}
+                    profileRef={profileRef}
+                    setMenuState={setMenuState}
+                    closeAllMenus={closeAllMenus}
+                    handleLogout={handleLogout}
+                  />
+                </div>
+                {/* Show logout button on mobile */}
+                <div className="lg:hidden">
+                  <button
+                    onClick={handleLogout}
+                    className="px-3 py-1.5 text-xs font-medium text-red-600 border border-red-600 rounded-md hover:bg-red-600 hover:text-white transition-colors flex items-center"
+                  >
+                    <AiOutlineLogout className="mr-1" /> Logout
+                  </button>
+                </div>
+              </>
             ) : (
-              <AuthButtons />
+              <>
+                {/* Desktop auth buttons */}
+                <div className="hidden lg:block">
+                  <AuthButtons />
+                </div>
+                {/* Mobile auth buttons - শুধুমাত্র Login বোতাম দেখাবে */}
+                <div className="lg:hidden">
+                  <MobileAuthButtons />
+                </div>
+              </>
             )}
           </div>
         </div>

@@ -12,6 +12,7 @@ import {
   AiOutlineHeart,
   AiOutlineArrowUp,
   AiOutlineFundProjectionScreen,
+  AiOutlineIdcard,
 } from "react-icons/ai";
 import img from "../assets/logo.jpg";
 
@@ -43,7 +44,7 @@ const Footer = () => {
   return (
     <footer className="bg-gray-900 text-white pt-12 pb-6">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Logo & Company Info */}
           <div className="col-span-1 lg:col-span-1">
             <div className="flex items-center mb-4">
@@ -173,6 +174,34 @@ const Footer = () => {
                   Subscribe
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* License Information Row - Contact Info এর পরে, ডান পাশে */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-800 rounded-lg p-4 mb-8">
+          <div className="mb-4 md:mb-0">
+            <h4 className="text-lg font-semibold mb-2 flex items-center">
+              <AiOutlineIdcard className="text-blue-400 mr-2" /> 
+              Official Licenses & Registrations
+            </h4>
+            <p className="text-gray-300 text-sm">
+              ExamHero is a fully registered and licensed educational platform
+            </p>
+          </div>
+          
+          <div className="flex flex-col md:items-end space-y-2">
+            <div className="flex items-center">
+              <span className="text-gray-400 text-sm mr-2">Trade License:</span>
+              <span className="font-medium">45 | Book No.- 01</span>
+            </div>
+            <div className="flex items-center">
+              <span className="text-gray-400 text-sm mr-2">BIN:</span>
+              <span className="font-medium">Processing</span>
+            </div>
+            <div className="flex items-center">
+              <span className="text-gray-400 text-sm mr-2">DUNS:</span>
+              <span className="font-medium">Processing</span>
             </div>
           </div>
         </div>

@@ -204,7 +204,7 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">ঠিকানা</h3>
-                      <p className="text-gray-600">শিক্ষা সড়ক, ঢাকা-১২১২</p>
+                      <p className="text-gray-600">হোল্ডিং নং ৪৩৯, জানকিখিলা, শ্রীবরদী, শেরপুর, ময়মনসিংহ, বাংলাদেশ</p>
                     </div>
                   </div>
                   <div className="flex items-start">
@@ -230,7 +230,7 @@ const Contact = () => {
               className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
               {[
-                { icon: <FaChalkboardTeacher className="text-secondary text-xl" />, count: "১২৫+", label: "সক্রিয় শিক্ষক", color: "secondary" },
+                { icon: <FaChalkboardTeacher className="text-secondary text-xl" />, count: "৫০+", label: "সক্রিয় শিক্ষক", color: "secondary" },
                 { icon: <FaBookReader className="text-accent text-xl" />, count: "৩,৫০০+", label: "নিবন্ধিত শিক্ষার্থী", color: "accent" },
                 { icon: <FaGraduationCap className="text-primary text-xl" />, count: "৯৫%", label: "সাফল্যের হার", color: "primary" },
                 { icon: <FaUsers className="text-info text-xl" />, count: "১০+", label: "বছরের অভিজ্ঞতা", color: "info" }
@@ -427,23 +427,6 @@ const Contact = () => {
           </AnimatedCard>
         </div>
 
-        {/* FAQ Section */}
-        <div className="mt-20">
-          <h2 className="text-3xl font-bold text-center mb-10">প্রায়শই জিজ্ঞাসিত প্রশ্ন</h2>
-          <div className="space-y-4 max-w-3xl mx-auto">
-            {[
-              { q: "আমি কি অনলাইন এবং অফলাইন উভয় ক্লাস পেতে পারি?", a: "হ্যাঁ, আমাদের শিক্ষকরা অনলাইন এবং অফলাইন উভয় ধরণের ক্লাসের জন্য উপলব্ধ।" },
-              { q: "শিক্ষকের যোগ্যতা কীভাবে যাচাই করা হয়?", a: "আমরা প্রতিটি শিক্ষকের শিক্ষাগত সনদপত্র ও অভিজ্ঞতা যাচাই করি।" },
-              { q: "কোন কোন বিষয়ের শিক্ষক পাওয়া যায়?", a: "এসএসসি ও এইচএসসি সকল বিজ্ঞান, বাণিজ্য ও মানবিক বিষয়ের শিক্ষক পাওয়া যায়।" }
-            ].map((faq, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="collapse collapse-plus bg-white shadow rounded-xl">
-                <input type="checkbox" />
-                <div className="collapse-title text-lg font-medium">{faq.q}</div>
-                <div className="collapse-content"><p className="text-gray-600">{faq.a}</p></div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
 
    
       </div>

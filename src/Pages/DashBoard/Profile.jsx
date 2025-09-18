@@ -30,13 +30,34 @@ const Profile = () => {
   ];
 
   const handleClick = ()=>{
-    toast.success("coming soon")
-    return
+    toast.success("Coming soon");
   }
 
   return (
     <div className="min-h-screen bg-base-200 py-8 px-4">
       <div className="max-w-4xl mx-auto">
+        {/* Welcome Banner */}
+        <div className="card bg-gradient-to-r from-primary to-secondary text-primary-content mb-6">
+          <div className="card-body py-4">
+            <h2 className="card-title justify-center text-2xl mb-2">অভিনন্দন প্রিয় শিক্ষার্থী!</h2>
+            <p className="text-center">
+              Exam Hero তে রেজিস্ট্রেশন করার জন্য ধন্যবাদ। আমাদের সকল কার্যক্রম আপাতত আমাদের Exam Hero App এ অনুষ্ঠিত হবে।
+            </p>
+          </div>
+        </div>
+
+        {/* App Download Notice */}
+        <div className="alert alert-info mb-6">
+          <div className="flex-1">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-6 h-6 mx-2 stroke-current">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <label>
+              <span className="font-bold">বিঃদ্রঃ</span> আমাদের সকল সার্ভিস উপভোগ করতে আমাদের অ্যাপ ইন্সটল করুন। <span className="font-bold">অবশ্যই নতুন করে রেজিস্ট্রেশন করতে হবে App ডাউনলোড করার পর।</span>
+            </label>
+          </div>
+        </div>
+
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Profile Card */}
           <div className="card w-full lg:w-1/3 bg-base-100 shadow-xl h-fit">
@@ -70,7 +91,6 @@ const Profile = () => {
               </div>
               
               <div className="card-actions mt-6 w-full">
-              
                 <button className="btn btn-primary w-full" onClick={handleLogout}>Log Out</button>
               </div>
             </div>
@@ -78,8 +98,7 @@ const Profile = () => {
           
           {/* Content Section */}
           <div className="w-full lg:w-2/3 space-y-6">
-            {/* Stats Section */}
-         
+        
             
             {/* Upcoming Exams */}
             <div className="card bg-base-100 shadow">
@@ -97,7 +116,7 @@ const Profile = () => {
                   ))}
                 </div>
                 <div className="card-actions justify-end mt-4">
-                  <button className="btn btn-ghost btn-sm">View all exams</button>
+                  <button onClick={handleClick} className="btn btn-ghost btn-sm">View all exams</button>
                 </div>
               </div>
             </div>

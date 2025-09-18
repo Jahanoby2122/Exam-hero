@@ -12,12 +12,27 @@ const ContactMessageAdmin = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortBy, setSortBy] = useState("newest");
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // ✅ Check screen size for responsiveness
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // ✅ Format date helper
   const formatDate = useCallback((dateString) => {
     if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleString();
-  }, []);
+    const date = new Date(dateString);
+    if (isMobile) {
+      return date.toLocaleDateString();
+    }
+    return date.toLocaleString();
+  }, [isMobile]);
 
   // ✅ Fetch contacts from backend
   const fetchContacts = useCallback(async () => {
@@ -45,6 +60,9 @@ const ContactMessageAdmin = () => {
       await axios.delete(`${API_BASE_URL}/contacts/${id}`);
       setContacts((prev) => prev.filter((c) => c._id !== id));
       setSuccess("Contact message deleted successfully ✅");
+      if (selectedContact && selectedContact._id === id) {
+        setSelectedContact(null);
+      }
     } catch (err) {
       console.error("Failed to delete contact:", err);
       setError("Failed to delete contact message ❌");
@@ -65,6 +83,11 @@ const ContactMessageAdmin = () => {
       setContacts((prev) =>
         prev.map((c) => (c._id === id ? { ...c, status: newStatus } : c))
       );
+
+      // Update selected contact if it's the one being modified
+      if (selectedContact && selectedContact._id === id) {
+        setSelectedContact({ ...selectedContact, status: newStatus });
+      }
 
       setSuccess(`Marked as ${newStatus}`);
     } catch (err) {
@@ -120,40 +143,56 @@ const ContactMessageAdmin = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4 md:mb-0">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-3 md:mb-0">
           Contact Messages
         </h2>
-        <div className="flex items-center space-x-4">
-          <button onClick={fetchContacts} className="btn btn-outline btn-primary">
-            🔄 Refresh
+        <div className="flex items-center space-x-2 sm:space-x-4">
+          <button 
+            onClick={fetchContacts} 
+            className="btn btn-outline btn-primary btn-sm sm:btn-md"
+            aria-label="Refresh messages"
+          >
+            <span className="sm:inline hidden">Refresh</span>
+            <span className="sm:hidden">🔄</span>
           </button>
           <span className="badge badge-lg badge-neutral">
-            {filteredContacts.length} of {contacts.length} messages
+            {filteredContacts.length}/{contacts.length}
           </span>
         </div>
       </div>
 
       {/* Status Messages */}
-      {error && <div className="alert alert-error mb-4">{error}</div>}
-      {success && <div className="alert alert-success mb-4">{success}</div>}
+      {error && (
+        <div className="alert alert-error mb-4 py-2 text-sm sm:text-base">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="alert alert-success mb-4 py-2 text-sm sm:text-base">
+          {success}
+        </div>
+      )}
 
       {/* Filters */}
-      <div className="bg-base-200 p-6 rounded-lg mb-6 flex flex-col md:flex-row gap-4">
-        <input
-          type="text"
-          placeholder="Search contacts..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="input input-bordered flex-1"
-        />
+      <div className="bg-base-200 p-4 sm:p-6 rounded-lg mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="lg:col-span-2">
+          <input
+            type="text"
+            placeholder="Search contacts..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="input input-bordered w-full"
+          />
+        </div>
 
         <select
-          className="select select-bordered"
+          className="select select-bordered w-full"
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
+          aria-label="Filter by status"
         >
           <option value="all">All Messages</option>
           <option value="unread">Unread</option>
@@ -161,9 +200,10 @@ const ContactMessageAdmin = () => {
         </select>
 
         <select
-          className="select select-bordered"
+          className="select select-bordered w-full"
           value={sortBy}
           onChange={(e) => setSortBy(e.target.value)}
+          aria-label="Sort by"
         >
           <option value="newest">Newest First</option>
           <option value="oldest">Oldest First</option>
@@ -172,17 +212,17 @@ const ContactMessageAdmin = () => {
       </div>
 
       {/* Contact List */}
-      <div className="grid gap-4">
+      <div className="grid gap-3 sm:gap-4">
         {filteredContacts.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-xl text-gray-600">No contact messages found</p>
+          <div className="text-center py-8 sm:py-12">
+            <p className="text-lg sm:text-xl text-gray-600">No contact messages found</p>
             {(searchTerm || filterStatus !== "all") && (
               <button
                 onClick={() => {
                   setSearchTerm("");
                   setFilterStatus("all");
                 }}
-                className="btn btn-ghost mt-3"
+                className="btn btn-ghost mt-3 btn-sm sm:btn-md"
               >
                 Clear Filters
               </button>
@@ -192,30 +232,30 @@ const ContactMessageAdmin = () => {
           filteredContacts.map((contact) => (
             <div
               key={contact._id}
-              className={`card bg-base-100 shadow-lg hover:shadow-xl cursor-pointer ${
+              className={`card bg-base-100 shadow hover:shadow-lg cursor-pointer ${
                 contact.status === "unread" ? "ring-2 ring-primary" : ""
               }`}
               onClick={() => viewContactDetails(contact)}
             >
-              <div className="card-body p-4">
-                <div className="flex flex-col md:flex-row justify-between gap-4">
-                  <div>
-                    <h3 className="card-title">{contact.name}</h3>
-                    <p className="text-sm text-gray-500">{contact.email}</p>
-                    <p className="mt-2 line-clamp-2">
+              <div className="card-body p-3 sm:p-4">
+                <div className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="card-title text-lg sm:text-xl truncate">{contact.name}</h3>
+                    <p className="text-xs sm:text-sm text-gray-500 truncate">{contact.email}</p>
+                    <p className="mt-2 text-sm sm:text-base line-clamp-2 break-words">
                       {contact.message?.length > 100
                         ? contact.message.slice(0, 100) + "..."
                         : contact.message}
                     </p>
                   </div>
 
-                  <div className="flex flex-col items-end gap-2">
-                    <span className="text-sm text-gray-400">
+                  <div className="flex flex-row sm:flex-col justify-between items-start sm:items-end gap-2 sm:gap-2">
+                    <span className="text-xs text-gray-400 sm:self-end">
                       {formatDate(contact.createdAt)}
                     </span>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1 sm:gap-2">
                       <button
-                        className={`btn btn-sm ${
+                        className={`btn btn-xs sm:btn-sm ${
                           contact.status === "read"
                             ? "btn-outline"
                             : "btn-primary"
@@ -224,17 +264,20 @@ const ContactMessageAdmin = () => {
                           e.stopPropagation();
                           toggleReadStatus(contact._id, contact.status);
                         }}
+                        aria-label={contact.status === "read" ? "Mark as unread" : "Mark as read"}
                       >
-                        {contact.status === "read" ? "Read" : "Unread"}
+                        {isMobile ? (contact.status === "read" ? "✓" : "●") : 
+                          (contact.status === "read" ? "Read" : "Unread")}
                       </button>
                       <button
-                        className="btn btn-sm btn-error btn-outline"
+                        className="btn btn-xs sm:btn-sm btn-error btn-outline"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDelete(contact._id);
                         }}
+                        aria-label="Delete message"
                       >
-                        Delete
+                        {isMobile ? "🗑" : "Delete"}
                       </button>
                     </div>
                   </div>
@@ -248,24 +291,28 @@ const ContactMessageAdmin = () => {
       {/* Contact Details Modal */}
       {selectedContact && (
         <div className="modal modal-open">
-          <div className="modal-box max-w-3xl">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-2xl font-bold">Message Details</h3>
-              <button className="btn btn-sm btn-circle btn-ghost" onClick={closeModal}>
+          <div className="modal-box max-w-3xl w-11/12 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 sm:mb-6">
+              <h3 className="text-xl sm:text-2xl font-bold">Message Details</h3>
+              <button 
+                className="btn btn-sm btn-circle btn-ghost" 
+                onClick={closeModal}
+                aria-label="Close modal"
+              >
                 ✕
               </button>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row gap-4">
+            <div className="space-y-3 sm:space-y-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <div className="flex-1">
-                  <p className="font-semibold">Name</p>
-                  <div className="p-3 bg-base-200 rounded-lg">{selectedContact.name}</div>
+                  <p className="font-semibold text-sm sm:text-base">Name</p>
+                  <div className="p-2 sm:p-3 bg-base-200 rounded-lg mt-1">{selectedContact.name}</div>
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold">Email</p>
-                  <div className="p-3 bg-base-200 rounded-lg">
-                    <a href={`mailto:${selectedContact.email}`} className="link link-primary">
+                  <p className="font-semibold text-sm sm:text-base">Email</p>
+                  <div className="p-2 sm:p-3 bg-base-200 rounded-lg mt-1">
+                    <a href={`mailto:${selectedContact.email}`} className="link link-primary break-all">
                       {selectedContact.email}
                     </a>
                   </div>
@@ -273,37 +320,36 @@ const ContactMessageAdmin = () => {
               </div>
 
               <div>
-                <p className="font-semibold">Date</p>
-                <div className="p-3 bg-base-200 rounded-lg">
+                <p className="font-semibold text-sm sm:text-base">Date</p>
+                <div className="p-2 sm:p-3 bg-base-200 rounded-lg mt-1">
                   {formatDate(selectedContact.createdAt)}
                 </div>
               </div>
 
               <div>
-                <p className="font-semibold">Message</p>
-                <div className="p-4 bg-base-200 rounded-lg whitespace-pre-wrap">
+                <p className="font-semibold text-sm sm:text-base">Message</p>
+                <div className="p-3 sm:p-4 bg-base-200 rounded-lg mt-1 whitespace-pre-wrap overflow-auto max-h-40 sm:max-h-60">
                   {selectedContact.message}
                 </div>
               </div>
             </div>
 
-            <div className="modal-action">
+            <div className="modal-action flex-col sm:flex-row gap-2 sm:gap-4 mt-4 sm:mt-6">
               <button
-                className="btn btn-outline"
+                className="btn btn-outline w-full sm:w-auto order-2 sm:order-1"
                 onClick={() =>
                   toggleReadStatus(selectedContact._id, selectedContact.status)
                 }
               >
-                Mark as{" "}
-                {selectedContact.status === "read" ? "Unread" : "Read"}
+                Mark as {selectedContact.status === "read" ? "Unread" : "Read"}
               </button>
               <button
-                className="btn btn-error"
+                className="btn btn-error w-full sm:w-auto order-1 sm:order-2"
                 onClick={() => handleDelete(selectedContact._id)}
               >
                 Delete Message
               </button>
-              <button className="btn" onClick={closeModal}>
+              <button className="btn w-full sm:w-auto order-3" onClick={closeModal}>
                 Close
               </button>
             </div>

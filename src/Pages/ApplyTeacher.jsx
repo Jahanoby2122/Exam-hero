@@ -25,21 +25,22 @@ const ApplyTeacher = () => {
   const [uploadError, setUploadError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ফর্ম ভ্যালিডেশন
+  // ফর্ম ভ্যালিডেশন - ইমেইল এবং ফোন অপশনাল করুন
   const validateForm = () => {
     const newErrors = {};
     if (!teacher.fullName.trim()) newErrors.fullName = "নাম প্রয়োজন";
     if (!teacher.subject.trim()) newErrors.subject = "বিষয় প্রয়োজন";
-    if (!teacher.email.trim()) {
-      newErrors.email = "ইমেইল প্রয়োজন";
-    } else if (!/^\S+@\S+\.\S+$/.test(teacher.email)) {
+    
+    // ইমেইল অপশনাল - শুধু থাকলে ভ্যালিডেট করবে
+    if (teacher.email.trim() && !/^\S+@\S+\.\S+$/.test(teacher.email)) {
       newErrors.email = "সঠিক ইমেইল ঠিকানা লিখুন";
     }
-    if (!teacher.phone.trim()) {
-      newErrors.phone = "ফোন নম্বর প্রয়োজন";
-    } else if (!/^(?:\+88|01)?\d{11}$/.test(teacher.phone.replace(/\s+/g, ""))) {
+    
+    // ফোন নম্বর অপশনাল - শুধু থাকলে ভ্যালিডেট করবে
+    if (teacher.phone.trim() && !/^(?:\+88|01)?\d{11}$/.test(teacher.phone.replace(/\s+/g, ""))) {
       newErrors.phone = "সঠিক ফোন নম্বর লিখুন";
     }
+    
     if (!teacher.experience) newErrors.experience = "অভিজ্ঞতা প্রয়োজন";
     if (!teacher.qualification) newErrors.qualification = "যোগ্যতা প্রয়োজন";
     if (!teacher.department.trim()) newErrors.department = "বিভাগ প্রয়োজন";
@@ -182,6 +183,7 @@ const ApplyTeacher = () => {
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 text-center">
             <h2 className="text-3xl font-bold mb-2">শিক্ষক নিয়োগ ফর্ম</h2>
             <p className="opacity-90">নিচের ফর্মটি পূরণ করে শিক্ষক হিসেবে আবেদন করুন</p>
+            <p className="text-sm mt-2 opacity-80">ইমেইল এবং ফোন নম্বর অপশনাল - না দিলেও সমস্যা নেই</p>
           </div>
 
           <form onSubmit={handleSubmit} className="p-6 space-y-6">
@@ -226,10 +228,10 @@ const ApplyTeacher = () => {
                 )}
               </div>
 
-              {/* ইমেইল */}
+              {/* ইমেইল (অপশনাল) */}
               <div className="form-group">
                 <label className="block mb-2 font-medium text-gray-700">
-                  ইমেইল ঠিকানা <span className="text-red-500">*</span>
+                  ইমেইল ঠিকানা
                 </label>
                 <input
                   type="email"
@@ -239,17 +241,17 @@ const ApplyTeacher = () => {
                   className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ${
                     errors.email ? "border-red-500 shake-animation" : "border-gray-300"
                   }`}
-                  placeholder="আপনার ইমেইল ঠিকানা"
+                  placeholder="আপনার ইমেইল ঠিকানা (ঐচ্ছিক)"
                 />
                 {errors.email && (
                   <p className="mt-1 text-sm text-red-500 fade-in">{errors.email}</p>
                 )}
               </div>
 
-              {/* ফোন নম্বর */}
+              {/* ফোন নম্বর (অপশনাল) */}
               <div className="form-group">
                 <label className="block mb-2 font-medium text-gray-700">
-                  ফোন নম্বর <span className="text-red-500">*</span>
+                  ফোন নম্বর
                 </label>
                 <input
                   type="text"
@@ -259,7 +261,7 @@ const ApplyTeacher = () => {
                   className={`w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 ${
                     errors.phone ? "border-red-500 shake-animation" : "border-gray-300"
                   }`}
-                  placeholder="আপনার ফোন নম্বর"
+                  placeholder="আপনার ফোন নম্বর (ঐচ্ছিক)"
                 />
                 {errors.phone && (
                   <p className="mt-1 text-sm text-red-500 fade-in">{errors.phone}</p>
