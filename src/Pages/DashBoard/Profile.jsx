@@ -1,11 +1,21 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { AuthContext } from '../../Provider/AuthProvider';
 import { toast } from 'react-toastify';
+import { FaMobileAlt, FaQrcode, FaDatabase, FaVideo, FaClock, FaUserTie, FaEdit } from 'react-icons/fa';
 
 const Profile = () => {
   const { user, logOut } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [showAppModal, setShowAppModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [userData, setUserData] = useState({
+    displayName: user?.displayName || 'Student',
+    email: user?.email || '',
+    phone: '',
+    institution: 'Dhaka College',
+    class: 'HSC 2nd Year'
+  });
 
   const handleLogout = () => {
     logOut()
@@ -13,6 +23,20 @@ const Profile = () => {
         navigate('/login');
       })
       .catch((error) => console.error(error));
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSave = () => {
+    // Here you would typically update the user profile in your backend
+    toast.success("Profile updated successfully!");
+    setIsEditing(false);
   };
 
   // Mock data for demonstration
@@ -29,9 +53,9 @@ const Profile = () => {
     { id: 3, name: 'English 2nd Paper', date: '29 October 2023' }
   ];
 
-  const handleClick = ()=>{
+  const handleClick = () => {
     toast.success("Coming soon");
-  }
+  };
 
   return (
     <div className="min-h-screen bg-base-200 py-8 px-4">
@@ -43,6 +67,14 @@ const Profile = () => {
             <p className="text-center">
               Exam Hero তে রেজিস্ট্রেশন করার জন্য ধন্যবাদ। আমাদের সকল কার্যক্রম আপাতত আমাদের Exam Hero App এ অনুষ্ঠিত হবে।
             </p>
+            <div className="card-actions justify-center mt-2">
+              <button 
+                className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-primary"
+                onClick={() => setShowAppModal(true)}
+              >
+                অ্যাপ ডাউনলোড করুন
+              </button>
+            </div>
           </div>
         </div>
 
@@ -61,38 +93,101 @@ const Profile = () => {
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Profile Card */}
           <div className="card w-full lg:w-1/3 bg-base-100 shadow-xl h-fit">
-            <figure className="px-10 pt-10">
+            <figure className="px-10 pt-10 relative">
               <div className="avatar">
                 <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
                   <img src={user?.photoURL || 'https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg'} alt="User Avatar" />
                 </div>
               </div>
+              <button 
+                className="absolute bottom-2 right-14 btn btn-circle btn-sm btn-primary"
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                <FaEdit className="text-xs" />
+              </button>
             </figure>
             <div className="card-body items-center text-center">
-              <h2 className="card-title text-2xl font-bold">{user?.displayName || 'Student'}</h2>
-              <p className="text-sm text-gray-500">{user?.email}</p>
-            
-              
-              <div className="divider my-2"></div>
-              
-              <div className="w-full space-y-3">
-                <div className="flex justify-between">
-                  <span className="font-medium">Member since</span>
-                  <span className="text-gray-600">Jan 2023</span>
+              {isEditing ? (
+                <div className="w-full space-y-4">
+                  <input 
+                    type="text" 
+                    name="displayName"
+                    value={userData.displayName}
+                    onChange={handleInputChange}
+                    className="input input-bordered w-full"
+                  />
+                  <input 
+                    type="email" 
+                    name="email"
+                    value={userData.email}
+                    onChange={handleInputChange}
+                    className="input input-bordered w-full"
+                  />
+                  <input 
+                    type="text" 
+                    name="phone"
+                    value={userData.phone}
+                    onChange={handleInputChange}
+                    placeholder="Phone Number"
+                    className="input input-bordered w-full"
+                  />
+                  <input 
+                    type="text" 
+                    name="institution"
+                    value={userData.institution}
+                    onChange={handleInputChange}
+                    className="input input-bordered w-full"
+                  />
+                  <select 
+                    name="class"
+                    value={userData.class}
+                    onChange={handleInputChange}
+                    className="select select-bordered w-full"
+                  >
+                    <option>SSC</option>
+                    <option>HSC 1st Year</option>
+                    <option>HSC 2nd Year</option>
+                  </select>
+                  <div className="flex gap-2 w-full">
+                    <button className="btn btn-primary flex-1" onClick={handleSave}>Save</button>
+                    <button className="btn btn-ghost flex-1" onClick={() => setIsEditing(false)}>Cancel</button>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Account type</span>
-                  <span className="text-gray-600">Premium</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Last active</span>
-                  <span className="text-gray-600">Today</span>
-                </div>
-              </div>
-              
-              <div className="card-actions mt-6 w-full">
-                <button className="btn btn-primary w-full" onClick={handleLogout}>Log Out</button>
-              </div>
+              ) : (
+                <>
+                  <h2 className="card-title text-2xl font-bold">{userData.displayName}</h2>
+                  <p className="text-sm text-gray-500">{userData.email}</p>
+                  
+                  <div className="divider my-2"></div>
+                  
+                  <div className="w-full space-y-3">
+                    <div className="flex justify-between">
+                      <span className="font-medium">Phone</span>
+                      <span className="text-gray-600">{userData.phone || 'Not provided'}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Institution</span>
+                      <span className="text-gray-600">{userData.institution}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Class</span>
+                      <span className="text-gray-600">{userData.class}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Member since</span>
+                      <span className="text-gray-600">Jan 2023</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="font-medium">Account type</span>
+                      <span className="text-gray-600">Premium</span>
+                    </div>
+                  </div>
+                  
+                  <div className="card-actions mt-6 w-full">
+                    <button className="btn btn-primary w-full" onClick={handleLogout}>Log Out</button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
           
@@ -157,6 +252,82 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* App Download Modal */}
+      {showAppModal && (
+        <div className="modal modal-open">
+          <div className="modal-box max-w-2xl">
+            <button 
+              className="btn btn-sm btn-circle absolute right-2 top-2"
+              onClick={() => setShowAppModal(false)}
+            >
+              ✕
+            </button>
+            <div className="p-6 md:p-8">
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-3xl mb-4">
+                  <FaMobileAlt className="text-2xl md:text-3xl" />
+                </div>
+                <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">
+                  এক্সাম হিরো অ্যাপ ডাউনলোড করুন
+                </h3>
+                <p className="text-gray-600 text-sm md:text-base">
+                  HSC Humanities এর সম্পূর্ণ পাঠ্যক্রম পেতে এখনই ডাউনলোড করুন। আমাদের অ্যাপ শীঘ্রই আসছে!
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4 mb-6">
+                <button 
+                  onClick={handleClick} 
+                  className="flex flex-col items-center justify-center p-4 bg-green-500 hover:bg-green-600 text-white rounded-xl shadow-md transition"
+                >
+                  <FaQrcode className="text-4xl mb-2" />
+                  <span className="font-medium">Google Play</span>
+                </button>
+
+                <button 
+                  onClick={handleClick} 
+                  className="flex flex-col items-center justify-center p-4 bg-blue-500 hover:bg-blue-600 text-white rounded-xl shadow-md transition"
+                >
+                  <FaQrcode className="text-4xl mb-2" />
+                  <span className="font-medium">App Store</span>
+                </button>
+              </div>
+
+              <div className="bg-blue-50 p-6 rounded-xl mb-6">
+                <h4 className="font-semibold text-lg mb-3 text-blue-800">অ্যাপের বিশেষ সুবিধাসমূহ</h4>
+                <ul className="space-y-2">
+                  <li className="flex items-center">
+                    <FaDatabase className="text-blue-500 mr-2" />
+                    <span className="text-gray-700">লক্ষাধিক প্রশ্নের ডাটাবেজ</span>
+                  </li>
+                  <li className="flex items-center">
+                    <FaVideo className="text-red-500 mr-2" />
+                    <span className="text-gray-700">ভিডিও সমাধান</span>
+                  </li>
+                  <li className="flex items-center">
+                    <FaClock className="text-purple-500 mr-2" />
+                    <span className="text-gray-700">লাইভ এক্সাম</span>
+                  </li>
+                  <li className="flex items-center">
+                    <FaUserTie className="text-green-500 mr-2" />
+                    <span className="text-gray-700">মেন্টর সাথে লাইভ চ্যাট</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="text-center">
+                <button 
+                  onClick={() => setShowAppModal(false)}
+                  className="px-6 py-2 bg-gray-200 text-gray-800 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+                >
+                  পরে দেখবো
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
