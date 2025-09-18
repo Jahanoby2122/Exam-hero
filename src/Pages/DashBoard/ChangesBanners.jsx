@@ -23,7 +23,7 @@ const ChangesBanners = ({ onBannerAdded, onBannerDeleted }) => {
   const fetchBanners = async () => {
     try {
       setFetchLoading(true);
-      const response = await axios.get("http://localhost:5000/banners");
+      const response = await axios.get("https://exam-hero-server.vercel.app/banners");
       setBanners(response.data);
     } catch (error) {
       console.error("Failed to fetch banners:", error);
@@ -84,7 +84,7 @@ const ChangesBanners = ({ onBannerAdded, onBannerDeleted }) => {
         return;
       }
       const imageUrl = await uploadImageToImgBB(image);
-      const response = await axios.post("http://localhost:5000/banners", {
+      const response = await axios.post("https://exam-hero-server.vercel.app/banners", {
         heading: data.heading,
         description: data.description,
         imageUrl,
@@ -108,7 +108,7 @@ const ChangesBanners = ({ onBannerAdded, onBannerDeleted }) => {
   const handleDeleteBanner = async (bannerId) => {
     try {
       setDeleting(true);
-      await axios.delete(`http://localhost:5000/banners/${bannerId}`);
+      await axios.delete(`https://exam-hero-server.vercel.app/banners/${bannerId}`);
       setMessage("✅ Banner deleted successfully!");
       setBanners(banners.filter((b) => b._id !== bannerId));
       setDeleteConfirm(null);

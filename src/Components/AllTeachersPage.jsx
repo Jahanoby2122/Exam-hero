@@ -19,7 +19,7 @@ const AllTeachersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const teachersPerPage = 6;
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = "https://exam-hero-server.vercel.app";
 
   // Fetch teachers
   const fetchTeachers = async () => {

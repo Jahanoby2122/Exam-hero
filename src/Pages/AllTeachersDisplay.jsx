@@ -13,7 +13,7 @@ const AllTeachersDisplay = () => {
   const [error, setError] = useState(null);
   const teacherRefs = useRef([]);
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = "https://exam-hero-server.vercel.app";
 
   // Fetch approved teachers only
   const fetchTeachers = async () => {

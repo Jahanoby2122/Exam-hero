@@ -13,7 +13,7 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const API_URL = "http://localhost:5000";
+const API_URL = "https://exam-hero-server.vercel.app";
 
 const TeacherDetails = () => {
   const { id } = useParams();

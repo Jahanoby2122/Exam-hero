@@ -14,7 +14,7 @@ const Hero = () => {
     const fetchBanners = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://localhost:5000/banners");
+        const res = await fetch("https://exam-hero-server.vercel.app/banners");
         if (!res.ok) throw new Error("Failed to fetch banners");
         const data = await res.json();
         setBanners(data);

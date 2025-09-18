@@ -184,8 +184,8 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">ফোন নম্বর</h3>
-                      <p className="text-gray-600">+৮৮০ ১৭XX-XXXXXX</p>
-                      <p className="text-gray-600">+৮৮০ ১৯XX-XXXXXX</p>
+                      <p className="text-gray-600">+88 01843716854</p>
+                    
                     </div>
                   </div>
                   <div className="flex items-start">
@@ -194,8 +194,8 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-lg">ইমেইল</h3>
-                      <p className="text-gray-600">contact@educonnect.com</p>
-                      <p className="text-gray-600">support@educonnect.com</p>
+                     
+                      <p className="text-gray-600">support@examhero.app</p>
                     </div>
                   </div>
                   <div className="flex items-start">

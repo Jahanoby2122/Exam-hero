@@ -44,32 +44,7 @@ const TermsAndConditions = () => {
   return (
     <div className="min-h-screen bg-base-200">
       {/* Navigation */}
-      <div className={`navbar fixed top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-base-100 shadow-md' : 'bg-transparent'}`}>
-        <div className="navbar-start">
-          <Link to="/" className="btn btn-ghost text-xl">এক্সাম হিরো</Link>
-        </div>
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">
-            {sections.map(section => (
-              <li key={section.id}>
-                <a
-                  href={`#${section.id}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    scrollToSection(section.id);
-                  }}
-                  className="text-sm"
-                >
-                  {section.title}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="navbar-end">
-          <Link to="/" className="btn btn-primary">হোম পেজ</Link>
-        </div>
-      </div>
+  
 
       {/* Main Content */}
       <div className="container mx-auto px-4 pt-24 pb-12">

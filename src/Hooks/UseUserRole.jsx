@@ -12,7 +12,7 @@ const useUserRole = () => {
       setRoleLoading(true);
 
       // Backend থেকে role fetch
-      fetch(`http://localhost:5000/users/email/${user.email}`)
+      fetch(`https://exam-hero-server.vercel.app/users/email/${user.email}`)
         .then((res) => {
           if (!res.ok) throw new Error("Failed to fetch role");
           return res.json();

@@ -13,7 +13,7 @@ const AdminTeacherApplication = () => {
   const [itemsPerPage, setItemsPerPage] = useState(9);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const API_URL = "http://localhost:5000";
+  const API_URL = "https://exam-hero-server.vercel.app";
 
   // Fetch all teachers (admin view)
   const fetchTeachers = async () => {

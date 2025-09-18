@@ -40,7 +40,7 @@ const ExamHeroHighlight = () => {
   // Fetch all highlights
   const fetchHighlights = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/exam-hero-highlights", {
+      const response = await axios.get("https://exam-hero-server.vercel.app/exam-hero-highlights", {
         timeout: 10000,
       });
       setHighlights(response.data);
@@ -143,7 +143,7 @@ const ExamHeroHighlight = () => {
     setServerMessage({ text: "", type: "" });
 
     try {
-      await axios.post("http://localhost:5000/exam-hero-highlights", data, {
+      await axios.post("https://exam-hero-server.vercel.app/exam-hero-highlights", data, {
         timeout: 10000,
       });
 
@@ -195,7 +195,7 @@ const ExamHeroHighlight = () => {
 
     setDeleteLoading(id);
     try {
-      await axios.delete(`http://localhost:5000/exam-hero-highlights/${id}`, {
+      await axios.delete(`https://exam-hero-server.vercel.app/exam-hero-highlights/${id}`, {
         timeout: 10000,
       });
 

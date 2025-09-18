@@ -19,7 +19,7 @@ const UserRoleUpdate = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/users');
+      const res = await fetch('https://exam-hero-server.vercel.app/users');
       if (!res.ok) throw new Error('Failed to fetch users');
       const data = await res.json();
       setUsers(data);
@@ -39,7 +39,7 @@ const UserRoleUpdate = () => {
   const handleRoleChange = async (userId, newRole) => {
     try {
       setUpdating(userId);
-      const res = await fetch(`http://localhost:5000/users/${userId}/role`, {
+      const res = await fetch(`https://exam-hero-server.vercel.app/users/${userId}/role`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole }),

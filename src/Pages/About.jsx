@@ -171,7 +171,7 @@ const About = () => {
               <div className="w-full h-96 bg-gradient-to-br from-primary to-secondary rounded-lg shadow-xl flex items-center justify-center overflow-hidden">
                 <div className="text-white text-center p-8 relative z-10">
                   <h3 className="text-3xl font-bold mb-4">সাফল্যের গল্প</h3>
-                  <p className="text-xl">২৫,০০০+ শিক্ষার্থী আমাদের মাধ্যমে তাদের পরীক্ষায় জিপিএ-৫ অর্জন করেছেন</p>
+                  <p className="text-xl">৩০০০+ শিক্ষার্থী আমাদের মাধ্যমে তাদের পরীক্ষায় জিপিএ-৫ অর্জন করেছেন</p>
                 </div>
                 <div className="absolute inset-0 bg-black/20"></div>
               </div>
@@ -200,12 +200,12 @@ const About = () => {
 
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="bg-primary/10 p-4 rounded-lg">
-                <h4 className="font-bold text-lg text-primary">২৫,০০০+</h4>
+                <h4 className="font-bold text-lg text-primary">৩০০০+ </h4>
                 <p className="text-gray-600">সফল শিক্ষার্থী</p>
               </div>
               <div className="bg-secondary/10 p-4 rounded-lg">
-                <h4 className="font-bold text-lg text-secondary">৫০০+</h4>
-                <p className="text-gray-600">মডেল টেস্ট</p>
+                <h4 className="font-bold text-lg text-secondary">১ লাখ + </h4>
+                <p className="text-gray-600">প্রশ্নব্যাংক</p>
               </div>
               <div className="bg-accent/10 p-4 rounded-lg">
                 <h4 className="font-bold text-lg text-accent">৫০+</h4>
